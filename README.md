@@ -1,2 +1,1 @@
-# rsv-landingpages
-Umbrella repository to manage all RSV landingpages.
+# FMC RSV Shared Components
