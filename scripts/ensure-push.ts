@@ -1,18 +1,33 @@
 import { $ } from 'bun'
 import colors from 'colors'
 
-console.log(colors.inverse.green('[rsv-shared] ensure rsv-shared has no pending changes'))
-const folder = '../rsv-shared'
-const { stderr } = await $`git push --dry-run`.cwd(folder).quiet()
-const response = stderr.toString('utf-8')
+console.log(colors.inverse.green('[rsv-shared] Ensuring rsv-shared has no pending changes...'))
 
-if (!response.includes('Everything up-to-date')) {
+const folder = '../rsv-shared'
+
+// Step 1: Check for uncommitted changes (staged or unstaged)
+const { stdout: status } = await $`git status --porcelain`.cwd(folder).quiet()
+
+if (status.toString('utf-8').length > 0) {
   console.log(
     colors.inverse.red(
-      '[rsv-shared] rsv-shared has unpushed commits! Push it before pushing the website.',
+      '[rsv-shared] There are uncommitted changes! Commit or stash them before pushing.',
     ),
   )
   process.exit(1)
 }
 
-console.log(colors.inverse.green('[rsv-shared] everything is pushed, all good'))
+// Step 2: Check for unpushed commits
+const { stderr: pushStatus } = await $`git push --dry-run`.cwd(folder).quiet()
+const response = pushStatus.toString('utf-8')
+
+if (!response.includes('Everything up-to-date')) {
+  console.log(
+    colors.inverse.red(
+      '[rsv-shared] rsv-shared has unpushed commits! Push them before pushing the website.',
+    ),
+  )
+  process.exit(1)
+}
+
+console.log(colors.inverse.green('[rsv-shared] Everything is clean and pushed. All good!'))
