@@ -32,34 +32,40 @@ await $`npm i https://github.com/FixMyBerlin/rsv-shared.git`.cwd(websiteFolder).
 const { stdout: statusAfterInstall } = await $`git status --porcelain`.cwd(websiteFolder).quiet()
 const statusAfterInstallString = statusAfterInstall.toString('utf-8')
 
-const somethingChanged = statusAfterInstallString.length > 0
-const checkPackageLockWasChanged = statusAfterInstallString.includes('package-lock.json')
-const checkOnlyOneFileChanged = statusAfterInstallString.split('\n').length > 2
-const somethingIsWrong =
-  somethingChanged && (!checkPackageLockWasChanged || checkOnlyOneFileChanged)
-if (somethingIsWrong) {
+// Step 3: Commit updated package if needed
+const nothingChanged = statusAfterInstallString.length === 0
+if (nothingChanged) {
+  // Latest package => Do nothing
+  console.log(colors.inverse.green('[rsv-website] Package already up to date.'))
+} else {
+  // Package needs to be updated
+
+  // Step 4: Check for unexpected changes
+  const checkPackageLockWasChanged = statusAfterInstallString.includes('package-lock.json')
+  const checkOnlyOneFileChanged = statusAfterInstallString.split('\n').length > 2
+  if (!checkPackageLockWasChanged || checkOnlyOneFileChanged) {
+    console.log(
+      colors.inverse.red(
+        '[rsv-website] Unexpected changes detected! Only package-lock.json should have changed.',
+      ),
+      statusAfterInstallString,
+    )
+    process.exit(1)
+  }
+
+  // Step 5: Commit the package-lock.json with commit message "Update rsv-shared to latest version"
+  console.log(colors.gray('[rsv-website] Committing package-lock.json...'))
+  await $`git add package-lock.json`.cwd(websiteFolder).quiet()
+  const commitMessage =
+    'Update rsv-shared to latest version\n\nDone by \`rsv-shared/scripts/update-package.ts\`'
+  await $`git commit -m "${commitMessage}"`.cwd(websiteFolder).quiet()
+
   console.log(
-    colors.inverse.red(
-      '[rsv-website] Unexpected changes detected! Only package-lock.json should have changed.',
-    ),
-    statusAfterInstallString,
+    colors.inverse.green('[rsv-website] Successfully updated shared package in website repo'),
+    websiteFolder,
   )
-  process.exit(1)
-}
 
-// Step 3: Commit the package-lock.json with commit message "Update rsv-shared to latest version"
-console.log(colors.gray('[rsv-website] Committing package-lock.json...'))
-await $`git add package-lock.json`.cwd(websiteFolder).quiet()
-const commitMessage =
-  'Update rsv-shared to latest version\n\nDone by \`rsv-shared/scripts/update-package.ts\`'
-await $`git commit -m "${commitMessage}"`.cwd(websiteFolder).quiet()
-
-console.log(
-  colors.inverse.green('[rsv-website] Successfully updated shared package in website repo'),
-  websiteFolder,
-)
-
-if (somethingChanged) {
+  // Step 6: Restart commit process
   console.log(colors.inverse.red('[rsv-website] You habe to `git push` again'))
   console.log(
     colors.gray(
