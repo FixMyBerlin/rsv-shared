@@ -1,12 +1,12 @@
 import { $ } from 'bun'
 import colors from 'colors'
 
-console.log(colors.inverse.green('[rsv-shared] Ensuring rsv-shared has no pending changes...'))
+console.log(colors.inverse.yellow('[rsv-shared] Ensuring rsv-shared has no pending changes...'))
 
-const folder = '../rsv-shared'
+const packageFolder = '../rsv-shared'
 
 // Step 1: Check for uncommitted changes (staged or unstaged)
-const { stdout: status } = await $`git status --porcelain`.cwd(folder).quiet()
+const { stdout: status } = await $`git status --porcelain`.cwd(packageFolder).quiet()
 
 if (status.toString('utf-8').length > 0) {
   console.log(
@@ -18,7 +18,7 @@ if (status.toString('utf-8').length > 0) {
 }
 
 // Step 2: Check for unpushed commits
-const { stderr: pushStatus } = await $`git push --dry-run`.cwd(folder).quiet()
+const { stderr: pushStatus } = await $`git push --dry-run`.cwd(packageFolder).quiet()
 const response = pushStatus.toString('utf-8')
 
 if (!response.includes('Everything up-to-date')) {
