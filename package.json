@@ -12,14 +12,21 @@
   ],
   "scripts": {},
   "devDependencies": {
-    "astro": "^5.4.2"
+    "astro": "^5.4.2",
+    "@types/bun": "latest"
   },
   "peerDependencies": {
-    "astro": "^4.0.0 || ^5.0.0"
+    "typescript": "^5.0.0"
   },
   "dependencies": {
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
+    "colors": "^1.4.0",
+    "prettier": "^3.5.3",
+    "prettier-plugin-astro": "^0.14.1",
+    "prettier-plugin-astro-organize-imports": "^0.4.11",
+    "prettier-plugin-organize-imports": "^4.1.0",
+    "prettier-plugin-tailwindcss": "^0.6.11",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   }
