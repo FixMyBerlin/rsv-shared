@@ -32,9 +32,12 @@ await $`npm i https://github.com/FixMyBerlin/rsv-shared.git`.cwd(websiteFolder).
 const { stdout: statusAfterInstall } = await $`git status --porcelain`.cwd(websiteFolder).quiet()
 const statusAfterInstallString = statusAfterInstall.toString('utf-8')
 
+const somethingChanged = statusAfterInstallString.length > 0
 const checkPackageLockWasChanged = statusAfterInstallString.includes('package-lock.json')
 const checkOnlyOneFileChanged = statusAfterInstallString.split('\n').length > 2
-if (!checkPackageLockWasChanged || checkOnlyOneFileChanged) {
+const somethingIsWrong =
+  somethingChanged && (!checkPackageLockWasChanged || checkOnlyOneFileChanged)
+if (somethingIsWrong) {
   console.log(
     colors.inverse.red(
       '[rsv-website] Unexpected changes detected! Only package-lock.json should have changed.',
@@ -55,3 +58,13 @@ console.log(
   colors.inverse.green('[rsv-website] Successfully updated shared package in website repo'),
   websiteFolder,
 )
+
+if (somethingChanged) {
+  console.log(colors.inverse.red('[rsv-website] You habe to `git push` again'))
+  console.log(
+    colors.gray(
+      '[rsv-website] The script just pushed the latest package during the pre-push hook. That would not get pushed because it was added after `git push` was called. We therefore fail the process so you can restart it.',
+    ),
+  )
+  process.exit(1)
+}
