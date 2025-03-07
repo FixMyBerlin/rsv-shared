@@ -1,6 +1,6 @@
 # FMC RSV Shared Components
 
-A collection of astro and react components that are shared between rsv website repos.
+Internal collection of astro and react components that are shared between RSV website repos.
 
 ## Usage
 
