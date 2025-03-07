@@ -17,6 +17,7 @@ if (status.toString('utf-8').length > 0) {
     colors.inverse.red(
       '[rsv-website] There are uncommitted changes in the website repo! Commit or stash them first…',
     ),
+    status,
   )
   process.exit(1)
 }
@@ -38,6 +39,7 @@ if (!checkPackageLockWasChanged || checkOnlyOneFileChanged) {
     colors.inverse.red(
       '[rsv-website] Unexpected changes detected! Only package-lock.json should have changed.',
     ),
+    statusAfterInstallString,
   )
   process.exit(1)
 }
