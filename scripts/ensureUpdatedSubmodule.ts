@@ -7,7 +7,7 @@ import {
   consoleLogSubjectWarning,
 } from './utils/consoleLog'
 
-async function main() {
+export const enshureUpdatedSubmodules = async () => {
   consoleLogSubjectIntro('Ensuring submodule is updated…')
 
   const submodulePath = './shared'
@@ -54,5 +54,3 @@ async function main() {
 
   consoleLogSubjectOutroSuccess('Submodule update complete!')
 }
-
-main()

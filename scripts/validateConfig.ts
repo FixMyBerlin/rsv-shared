@@ -63,7 +63,7 @@ const zodCOLORS = z
   })
   .strict()
 
-function main() {
+export const validateConfig = () => {
   consoleLogSubjectIntro('Validate configs')
 
   zodGITHUB_REPO_NAME.parse(GITHUB_REPO_NAME)
@@ -77,5 +77,3 @@ function main() {
 
   consoleLogSubjectOutroSuccess('Configs validated')
 }
-
-main()
