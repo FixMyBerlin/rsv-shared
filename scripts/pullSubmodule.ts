@@ -45,7 +45,7 @@ export const pullSubmodule = async () => {
 
   if (
     !pullStatusString.includes('Erfolgreich Rebase ausgeführt') &&
-    !pullStatusString.includes('Aktueller Branch main ist auf dem neuesten Stand')
+    !pullStatusString.includes('Current branch main is up to date.')
   ) {
     consoleLogSubjectError('Pulling remote changes failed. Please update manually.', {
       pullStatusString,
