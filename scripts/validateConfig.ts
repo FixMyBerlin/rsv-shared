@@ -1,7 +1,7 @@
 import { FONTNAME, GITHUB_REPO_NAME, META } from '@config/config'
 import { COLORS, COLORSCLASSES, LINKCLASSES } from '@config/styles'
 import { z } from 'astro/zod'
-import colors from 'colors'
+import { consoleLogSubjectIntro, consoleLogSubjectOutroSuccess } from './utils/consoleLog'
 
 const zodGITHUB_REPO_NAME = z.string()
 
@@ -64,7 +64,7 @@ const zodCOLORS = z
   .strict()
 
 function main() {
-  console.log(colors.inverse.yellow('[rsv-shared] Validate configs'))
+  consoleLogSubjectIntro('Validate configs')
 
   zodGITHUB_REPO_NAME.parse(GITHUB_REPO_NAME)
   zodMETA.parse(META)
@@ -75,7 +75,7 @@ function main() {
   zodCOLORSCLASSES.parse(COLORSCLASSES)
   zodCOLORS.parse(COLORS)
 
-  console.log(colors.green('[rsv-shared] Configs validated'))
+  consoleLogSubjectOutroSuccess('Configs validated')
 }
 
 main()

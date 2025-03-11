@@ -1,8 +1,14 @@
 import { $ } from 'bun'
-import colors from 'colors'
+import {
+  consoleLogSubjectError,
+  consoleLogSubjectIntro,
+  consoleLogSubjectNote,
+  consoleLogSubjectOutroSuccess,
+  consoleLogSubjectWarning,
+} from './utils/consoleLog'
 
 async function main() {
-  console.log(colors.inverse.yellow('[rsv-shared] Ensuring submodule is updated...'))
+  consoleLogSubjectIntro('Ensuring submodule is updated…')
 
   const submodulePath = './shared'
 
@@ -11,13 +17,13 @@ async function main() {
   const statusString = status.toString('utf-8')
 
   if (statusString.length > 0) {
-    console.log(
-      colors.inverse.red(
-        '[rsv-shared] There are uncommitted changes in the submodule! Commit or stash them before updating.',
-      ),
-      { statusString },
+    consoleLogSubjectError(
+      'There are uncommitted changes in the submodule! Commit or stash them before updating.',
+      {
+        statusString,
+      },
     )
-    console.log(colors.gray('[rsv-shared] How: `cd shared`, `git status`, Commit as usual'))
+    consoleLogSubjectNote('How: `cd shared`, `git status`, Commit as usual…')
     process.exit(1)
   }
 
@@ -26,8 +32,8 @@ async function main() {
   const pushStatusString = pushStatus.toString('utf-8')
 
   if (!pushStatusString.includes('Everything up-to-date')) {
-    console.log(
-      colors.inverse.yellow('[rsv-shared] There are unpushed commits in the submodule.'),
+    consoleLogSubjectWarning(
+      'There are unpushed commits in the submodule.',
       'We will rebase them if needed.',
     )
   }
@@ -40,14 +46,13 @@ async function main() {
     !pullStatusString.includes('Erfolgreich Rebase ausgeführt') &&
     !pullStatusString.includes('Aktueller Branch main ist auf dem neuesten Stand')
   ) {
-    console.log(
-      colors.inverse.red('[rsv-shared] Pulling remote changes failed. Please update manually.'),
-      { pullStatusString },
-    )
+    consoleLogSubjectError('Pulling remote changes failed. Please update manually.', {
+      pullStatusString,
+    })
     process.exit(1)
   }
 
-  console.log(colors.inverse.green('[rsv-shared] Submodule update complete!'))
+  consoleLogSubjectOutroSuccess('Submodule update complete!')
 }
 
 main()
