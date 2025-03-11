@@ -6,7 +6,7 @@ import {
 } from './utils/consoleLog'
 
 export const pushSubmodule = async () => {
-  $`export LANG=en_US.UTF-8`
+  $.env({ LANG: 'en_US.UTF-8' })
   consoleLogSubjectIntro('Ensuring submodule is pushed and commited…')
 
   const packageFolder = './shared'

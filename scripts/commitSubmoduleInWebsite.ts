@@ -6,7 +6,7 @@ import {
 } from './utils/consoleLog'
 
 export const commitSubmoduleInWebsite = async () => {
-  $`export LANG=en_US.UTF-8`
+  $.env({ LANG: 'en_US.UTF-8' })
   consoleLogSubjectIntro('Commit submodule on website repo…')
 
   // Step 1: Check that nothing is staged

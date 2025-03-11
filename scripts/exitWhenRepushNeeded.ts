@@ -2,7 +2,7 @@ import { $ } from 'bun'
 import { consoleLogSubjectWarning } from './utils/consoleLog'
 
 export const exitWhenRepushNeeded = async () => {
-  $`export LANG=en_US.UTF-8`
+  $.env({ LANG: 'en_US.UTF-8' })
 
   // Step: Check for unpushed changes
   const { stderr: pushStatus } = await $`git push --dry-run`.quiet()
