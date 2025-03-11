@@ -16,7 +16,7 @@ export const RoutesegmentMap = ({
   const routesegmentDetailMarkers = routesegmentDetails
     .map((detail) => {
       const matchingDetailGeo = routesegmentDetailsGeoData.features.find(
-        (d) => d.properties.detailId === detail.data.detailId,
+        (d) => d.properties.detailId === Number(detail.data.detailId),
       )
       if (!matchingDetailGeo) return null
       return (
