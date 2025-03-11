@@ -47,5 +47,5 @@ export const commitSubmoduleInWebsite = async () => {
     process.exit(1)
   }
 
-  consoleLogSubjectOutroSuccess('Commit completed')
+  consoleLogSubjectOutroSuccess('Submodule committed', '(But not pushed, yet.)')
 }

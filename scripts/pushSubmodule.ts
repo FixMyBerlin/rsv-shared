@@ -5,7 +5,7 @@ import {
   consoleLogSubjectOutroSuccess,
 } from './utils/consoleLog'
 
-export const ensureSubmodulePush = async () => {
+export const pushSubmodule = async () => {
   consoleLogSubjectIntro('Ensuring submodule is pushed and commited…')
 
   const packageFolder = './shared'
@@ -15,14 +15,17 @@ export const ensureSubmodulePush = async () => {
   const statusString = status.toString('utf-8')
 
   if (statusString.length > 0) {
-    consoleLogSubjectError('There are uncommitted changes! Commit or stash them before pushing.', {
-      statusString,
-    })
+    consoleLogSubjectError(
+      'There are uncommitted changes! Commit or stash them before pushing the submodule.',
+      {
+        statusString,
+      },
+    )
     process.exit(1)
   }
 
   // Step 2: Check for unpushed commits in submodule
-  const { stderr: pushStatus } = await $`git push --dry-run`.cwd(packageFolder).quiet()
+  const { stderr: pushStatus } = await $`git push`.cwd(packageFolder).quiet()
   const pushStatusString = pushStatus.toString('utf-8')
 
   if (!pushStatusString.includes('Everything up-to-date')) {
@@ -32,5 +35,8 @@ export const ensureSubmodulePush = async () => {
     process.exit(1)
   }
 
-  consoleLogSubjectOutroSuccess('submodule is pushed and commited!')
+  consoleLogSubjectOutroSuccess(
+    'Submodule is pushed!',
+    '(But not commited to the website repo, yet.)',
+  )
 }

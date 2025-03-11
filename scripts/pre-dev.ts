@@ -1,9 +1,9 @@
 import { commitSubmoduleInWebsite } from './commitSubmoduleInWebsite'
-import { enshureUpdatedSubmodules } from './ensureUpdatedSubmodule'
+import { pullSubmodule } from './pullSubmodule'
 import { validateConfig } from './validateConfig'
 
 async function main() {
-  await enshureUpdatedSubmodules()
+  await pullSubmodule()
   await commitSubmoduleInWebsite()
   validateConfig()
 }

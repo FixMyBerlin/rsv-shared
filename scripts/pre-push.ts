@@ -1,10 +1,10 @@
 import { commitSubmoduleInWebsite } from './commitSubmoduleInWebsite'
-import { ensureSubmodulePush } from './ensureSubmodulePush'
-import { enshureUpdatedSubmodules } from './ensureUpdatedSubmodule'
+import { pullSubmodule } from './pullSubmodule'
+import { pushSubmodule } from './pushSubmodule'
 
 async function main() {
-  await enshureUpdatedSubmodules()
-  await ensureSubmodulePush()
+  await pullSubmodule()
+  await pushSubmodule()
   await commitSubmoduleInWebsite()
 }
 

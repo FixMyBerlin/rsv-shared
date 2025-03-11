@@ -7,8 +7,8 @@ import {
   consoleLogSubjectWarning,
 } from './utils/consoleLog'
 
-export const enshureUpdatedSubmodules = async () => {
-  consoleLogSubjectIntro('Ensuring submodule is updated…')
+export const pullSubmodule = async () => {
+  consoleLogSubjectIntro('Ensuring latest submodule is pulled…')
 
   const submodulePath = './shared'
 
@@ -52,5 +52,8 @@ export const enshureUpdatedSubmodules = async () => {
     process.exit(1)
   }
 
-  consoleLogSubjectOutroSuccess('Submodule update complete!')
+  consoleLogSubjectOutroSuccess(
+    'Latest submodule is pulled!',
+    '(But not commited to the website repo, yet.)',
+  )
 }
