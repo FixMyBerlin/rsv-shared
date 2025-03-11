@@ -1,0 +1,26 @@
+---
+import { LINKCLASSES } from '@config/styles'
+import Section from '@shared/layouts/Section.astro'
+import { getCollection } from 'astro:content'
+
+const unsortedSegments = await getCollection('routesegments')
+const segments = unsortedSegments.sort((a, b) => a.data.position - b.data.position)
+---
+
+<Section>
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+    {
+      segments.map((item) => {
+        return (
+          <a
+            class="group flex flex-col justify-between bg-[#ECF1F9] p-4 text-black hover:bg-[#D9E4F2]"
+            href={`/route/${item.slug}`}
+          >
+            <p class="mb-3">{item.data.title}</p>
+            <small class={LINKCLASSES.groupLink}>Weiterlesen</small>
+          </a>
+        )
+      })
+    }
+  </div>
+</Section>

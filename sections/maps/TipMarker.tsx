@@ -33,9 +33,9 @@ const divStyles = {
   top: { ...shadow, bottom: 14, left: 0, transform: 'translateX(-50%)' },
 }
 
-export const TipMarker: React.FC<Props> = ({ className, anchor, children, ...props }) => {
+export const TipMarker = ({ className, anchor, children, ...props }: Props) => {
   return (
-    <div className={clsx('cursor-pointer whitespace-nowrap', className)} {...props}>
+    <div className={clsx('cursor-pointer', className)} {...props}>
       <div
         style={divStyles[anchor]}
         className="absolute rounded-md border border-gray-200 bg-white"

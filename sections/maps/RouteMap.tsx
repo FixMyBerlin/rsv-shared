@@ -26,11 +26,11 @@ export const RouteMap = ({ routesegments, focusSegemntId, routesegmentDetailMark
       (s) => s.data.tsSlug === segment.properties.subsectionSlug,
     )
     const markerContent = (
-      <div className="flex gap-2 p-1">
+      <div className="flex items-center gap-2 p-1">
         {segment.properties.status && (
           <div
             className={clsx(
-              'flex h-6 w-6 items-center justify-center rounded-full',
+              'flex size-6 flex-none items-center justify-center rounded-full',
               (focusSegemntId && focusSegemntId === segment.properties.subsectionSlug) ||
                 !focusSegemntId
                 ? routeSegmentStatus[segment.properties.status].colorClass
@@ -44,15 +44,19 @@ export const RouteMap = ({ routesegments, focusSegemntId, routesegmentDetailMark
             />
           </div>
         )}
-        {segment.properties.subsectionSlug === selectedSegment && (
-          <div className="text-xs">
-            <p>{matchingSegment?.data.title}</p>
+        {segment.properties.subsectionSlug === selectedSegment && matchingSegment?.data.title && (
+          <div
+            className="flex max-w-60 flex-col items-start justify-center text-xs"
+            data-subsectionSlug={segment.properties.subsectionSlug}
+          >
+            <p className="w-full truncate" title={matchingSegment?.data.title}>
+              {matchingSegment?.data.title}
+            </p>
             {segment.properties.estimatedCompletionDateString && (
               <p className="font-light">
                 Fertig: {segment.properties.estimatedCompletionDateString.split('-')[1]}
               </p>
             )}
-            <p className="font-light">TS Slug {segment.properties.subsectionSlug}</p>
           </div>
         )}
       </div>
@@ -65,6 +69,7 @@ export const RouteMap = ({ routesegments, focusSegemntId, routesegmentDetailMark
         latitude={midPoint.geometry.coordinates[1] as number}
         anchor="center"
         style={{ zIndex: segment.properties.subsectionSlug === selectedSegment ? 3 : 'unset' }}
+        className="max-w-60"
       >
         <TipMarker
           anchor={matchingSegment?.data.markerPositionBottom ? 'bottom' : 'top'}

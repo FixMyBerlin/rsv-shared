@@ -17,6 +17,7 @@ const zodFONTNAME = z.string()
 const zodLINKCLASSES = z
   .object({
     link: z.string(),
+    groupLink: z.string(),
     button: z.string(),
   })
   .strict()

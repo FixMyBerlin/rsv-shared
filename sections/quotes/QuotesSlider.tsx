@@ -103,7 +103,7 @@ export const QuotesSlider = ({
           }}
           className={clsx(
             COLORSCLASSES.quotesButton,
-            'absolute top-0 block h-14 w-14 text-gray-400 lg:top-[138px]',
+            'absolute top-0 block h-14 w-14 cursor-pointer text-gray-400 lg:top-[138px]',
             'right-[60px] lg:left-0',
           )}
         >
@@ -122,7 +122,7 @@ export const QuotesSlider = ({
           }}
           className={clsx(
             COLORSCLASSES.quotesButton,
-            'absolute top-0 block h-14 w-14 text-gray-400 lg:top-[138px]',
+            'absolute top-0 block h-14 w-14 cursor-pointer text-gray-400 lg:top-[138px]',
             'right-0',
           )}
         >

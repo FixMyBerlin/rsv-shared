@@ -2,7 +2,7 @@
 import { mdxComponentsAstro } from '@shared/cms/components/mdxComponentsAstro.astro'
 import Section from '@shared/layouts/Section.astro'
 import type { Segment } from '@src/pages/route/[slug].astro'
-import { getCollection, type CollectionEntry } from 'astro:content'
+import { getCollection, getEntry, type CollectionEntry } from 'astro:content'
 import RoutespageRoutesegmentDetail from './RoutespageRoutesegmentDetail.astro'
 
 type Props = { route: Segment }
@@ -18,12 +18,19 @@ const filteredAndSortedDetails = routesegmentDetails
   .sort((a, b) => a.data.position - b.data.position)
 
 const { title, operator, contact } = route.data
+
+const page = await getEntry('routepage', 'index')
+const subPagesActive = page?.data.subPagesActive
 ---
 
 <Section prose>
-  <div class="mt-16">
-    <a href="/route">{'<- Zurück zur Routenübersicht'}</a>
-  </div>
+  {
+    subPagesActive && (
+      <div class="mt-16">
+        <a href="/route">← Zurück zur Routenübersicht</a>
+      </div>
+    )
+  }
   <header id={route.slug} class="scroll-m-8">
     <h2>{title}</h2>
     {

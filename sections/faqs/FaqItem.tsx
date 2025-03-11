@@ -26,7 +26,7 @@ export const FaqItem = ({ title, children, showNumber }: Props) => {
         <>
           <header>
             <DisclosureButton
-              className="group flex w-full items-center justify-between gap-2 py-4 text-left text-balance text-gray-400"
+              className="group flex w-full cursor-pointer items-center justify-between gap-2 py-4 text-left text-balance text-gray-400"
               onClick={() => !open && matomoTrack()}
             >
               <div className="flex items-center gap-6">
