@@ -29,7 +29,10 @@ export const pushSubmodule = async () => {
   const { stderr: pushStatus } = await $`git push`.cwd(packageFolder).quiet()
   const pushStatusString = pushStatus.toString('utf-8')
 
-  if (!pushStatusString.includes('To https://github.com/FixMyBerlin/rsv-shared.git')) {
+  if (
+    !pushStatusString.includes('To https://github.com/FixMyBerlin/rsv-shared.git') &&
+    !pushStatusString.includes('Everything up-to-date')
+  ) {
     consoleLogSubjectError('Submodule has unpushed commits! Push them before pushing the webite.', {
       pushStatusString,
     })
