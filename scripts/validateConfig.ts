@@ -1,5 +1,18 @@
+import { FONTNAME, GITHUB_REPO_NAME, META } from '@config/config'
 import { COLORS, COLORSCLASSES, LINKCLASSES } from '@config/styles'
 import { z } from 'astro/zod'
+import colors from 'colors'
+
+const zodGITHUB_REPO_NAME = z.string()
+
+const zodMETA = z
+  .object({
+    title: z.string(),
+    description: z.string(),
+  })
+  .strict()
+
+const zodFONTNAME = z.string()
 
 const zodLINKCLASSES = z
   .object({
@@ -8,7 +21,7 @@ const zodLINKCLASSES = z
   })
   .strict()
 
-export const zodCOLORSCLASSES = z
+const zodCOLORSCLASSES = z
   .object({
     proseLink: z.string(),
     heroTextBg: z.string(),
@@ -37,7 +50,7 @@ export const zodCOLORSCLASSES = z
   })
   .strict()
 
-export const zodCOLORS = z
+const zodCOLORS = z
   .object({
     heroPin: z.string(),
     milestoneDone: z.string(),
@@ -50,9 +63,19 @@ export const zodCOLORS = z
   })
   .strict()
 
-export const validateStyles = () => {
+function main() {
+  console.log(colors.inverse.yellow('[rsv-shared] Validate configs'))
+
+  zodGITHUB_REPO_NAME.parse(GITHUB_REPO_NAME)
+  zodMETA.parse(META)
+  zodFONTNAME.parse(FONTNAME)
+  zodLINKCLASSES.parse(LINKCLASSES)
+
   zodLINKCLASSES.parse(LINKCLASSES)
   zodCOLORSCLASSES.parse(COLORSCLASSES)
   zodCOLORS.parse(COLORS)
-  return true
+
+  console.log(colors.green('[rsv-shared] Configs validated'))
 }
+
+main()
