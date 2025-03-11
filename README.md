@@ -1,11 +1,10 @@
 # FMC RSV Shared Components
 
-Internal collection of astro and react components that are shared between RSV website repos.
+A folder of components and configuration that is shared between RSV website repos via git submodules.
 
 ## Usage
 
-Each component needs to be exported in `index.ts`.
-They can then be imported in the website repo like `import { MyComponent, MyReactComponent } from '@fmc/rsv-shared-components'`
+
 
 ## General setup
 
@@ -13,9 +12,9 @@ They can then be imported in the website repo like `import { MyComponent, MyReac
 
 The shared repo and website folder need to be in one (local) folder to group them.
 
-`/Development/rsv-landingages/rsv-shared`
-`/Development/rsv-landingages/rsv-rs8`
-`/Development/rsv-landingages/rsv-frm7`
+- `/Development/rsv-landingages/rsv-shared` – this repo
+- `/Development/rsv-landingages/rsv-rs8` - has /shared which is the git submodule to this repo
+- `/Development/rsv-landingages/rsv-frm7` - dito
 
 **VS Code:**
 
