@@ -40,9 +40,7 @@ export const FaqItem = ({ title, children, showNumber }: Props) => {
                     {showNumber}
                   </span>
                 )}
-                <h3 className={clsx('text-gray-900', open ? 'font-bold' : 'font-medium')}>
-                  {title}
-                </h3>
+                <h3 className="font-medium text-gray-900">{title}</h3>
               </div>
               <span className="flex h-7 items-center" aria-hidden="true">
                 <ChevronDownIcon
@@ -57,7 +55,7 @@ export const FaqItem = ({ title, children, showNumber }: Props) => {
           <DisclosurePanel
             as="div"
             className={clsx(
-              '-mt-4 mb-14 sm:pl-12 lg:pr-12',
+              '-mt-4 mb-14 lg:pr-12',
               markdownProseClasses,
               'prose-div:max-w-full', // Don't know if this is needed, but it was there
               // 'text-sm md:text-[16px]', // We had this, but lets try to stick with the defaults
