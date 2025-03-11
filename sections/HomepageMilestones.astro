@@ -28,6 +28,9 @@ const lastMilestoneDone = sortedMilestones.filter((m) => m.status !== 'comingUp'
 
 <Section prose>
   <h2>{homepage.data.titleMilestones}</h2>
+
+  <ContentAfterMilestones components={mdxComponentsAstro} />
+
   {
     sortedMilestones.map(({ status, title, Content }, i) => {
       const commingUp = status === 'comingUp'
@@ -61,6 +64,4 @@ const lastMilestoneDone = sortedMilestones.filter((m) => m.status !== 'comingUp'
       )
     })
   }
-
-  <ContentAfterMilestones components={mdxComponentsAstro} />
 </Section>
