@@ -30,7 +30,7 @@ export const ScrollTopLink = () => {
       <button
         type="button"
         onClick={() => window.scrollTo(0, 0)}
-        className="mt-10 flex no-underline"
+        className="mt-10 flex cursor-pointer no-underline"
         aria-label="Zum Seitenanfang springen"
       >
         <ArrowUpCircleIcon
