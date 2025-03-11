@@ -12,7 +12,7 @@ Das Update der Linien-Daten, incl. properties "Status", "Datum der Fertigstellun
    - die Abschnitte anlegen
    - als `Trassenscout Slug` den Slug des Planungsabschnitts aus dem Trassenscout angeben
 3. Die Daten von TS holen:
-   - https://staging.trassenscout.de/api/projects/<PROJEKT_SLUG> aufrufen und Datei als .json speichern (Hinweis: das Suffix .json ist richtig)
+   - https://staging.trassenscout.de/api/projects/<PROJEKT_SLUG>.json aufrufen und Datei als .json speichern (Hinweis: das Suffix .json ist richtig)
 4. Datei hochladen:
    - im CMS unter `Geo Upload` > `Geo Upload Abschnitte` das neue json hochladen
    - durch Speichern werden die Punktdaten ersetzt
