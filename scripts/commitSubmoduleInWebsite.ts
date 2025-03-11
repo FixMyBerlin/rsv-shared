@@ -58,4 +58,12 @@ export const commitSubmoduleInWebsite = async () => {
   }
 
   consoleLogSubjectOutroSuccess('Submodule committed', '(But not pushed, yet.)')
+
+  // Step 4: EXIT so we can restart…
+  consoleLogSubjectError(`
+Push stopped. You need to re-trigger the push to include all changes.
+The pre-push script created a new commit to ensure the latest submodule is included.
+This new commit is not part of the current push.
+Therefore, we stopped the current push to restart it and include everything.`)
+  process.exit(1)
 }
