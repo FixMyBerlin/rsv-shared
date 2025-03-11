@@ -8,6 +8,7 @@ import {
 } from './utils/consoleLog'
 
 export const pullSubmodule = async () => {
+  $`export LANG=en_US.UTF-8`
   consoleLogSubjectIntro('Ensuring latest submodule is pulled…')
 
   const submodulePath = './shared'
