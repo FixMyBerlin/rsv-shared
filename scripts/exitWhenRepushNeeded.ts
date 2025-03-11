@@ -1,5 +1,5 @@
 import { $ } from 'bun'
-import { consoleLogSubjectError } from './utils/consoleLog'
+import { consoleLogSubjectNote } from './utils/consoleLog'
 
 export const exitWhenRepushNeeded = async () => {
   $.env({ LANG: 'en_US.UTF-8' })
@@ -9,12 +9,10 @@ export const exitWhenRepushNeeded = async () => {
   const pushStatusString = pushStatus.toString('utf-8')
 
   if (!pushStatusString.includes('Everything up-to-date')) {
-    consoleLogSubjectError(`
-      Pushed stopped. You need to re-trigger the push in order to push all changes.
-      The pre-push script created a new commit.
-      This new commit is not part of what is pushed right now.
-      We need to stop the current push and restart it in order to push everything.
+    consoleLogSubjectNote(`
+      We will no push again with --no-verify because the pre-push check
+      added a new commit which we now need to push as well.
     `)
-    process.exit(1)
+    await $`git push --no-verify`.quiet()
   }
 }
