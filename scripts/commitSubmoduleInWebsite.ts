@@ -23,6 +23,15 @@ export const commitSubmoduleInWebsite = async () => {
     process.exit(1)
   }
 
+  // Step GUARD: Check if there are changes in the "shared" directory
+  const { stdout: sharedStatus } = await $`git diff HEAD -- "shared"`.quiet()
+  const sharedStatusString = sharedStatus.toString('utf-8')
+
+  if (sharedStatusString.length === 0) {
+    consoleLogSubjectOutroSuccess('No changes in "shared" directory. Skipping commit.')
+    return
+  }
+
   // Step 2: git add
   const { stdout: result } = await $`git add shared`.quiet()
   const resultString = result.toString('utf-8')
