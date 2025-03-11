@@ -2,49 +2,54 @@
 
 A folder of components and configuration that is shared between RSV website repos via git submodules.
 
-## Usage
+## Intro
 
+> [!WARNING]
+> Submodules are tricky!
 
+### General setup
 
-## General setup
+Put the rsv-shared and all website repos in a local `rsv-landingages` folder.
+The scripts will rely on this structure.
 
-### Required folder structure
-
-The shared repo and website folder need to be in one (local) folder to group them.
-
-- `/Development/rsv-landingages/rsv-shared` – this repo
-- `/Development/rsv-landingages/rsv-rs8` - has /shared which is the git submodule to this repo
+- `/Development/rsv-landingages/rsv-shared` – [Repo with shared code](https://github.com/FixMyBerlin/rsv-shared) that we access via git submodules
+- `/Development/rsv-landingages/rsv-rs8` - the `/shared` folder hold the code of the `rsv-shared` repo as a git submodule
 - `/Development/rsv-landingages/rsv-frm7` - dito
 
-**VS Code:**
+### Submodules know how
 
-Open `/Development/rsv-landingages` in VS Code to access all repos at the same time.
+- Submodules are only updated when pulled (from inside the website repo).
+- The commit that the Submodule represents is checked in via a commit in the website repo.
 
-### Symlink shared package (automated)
+## Workflow
 
-See [`link-packages.ts`](./scripts/link-packages.ts).
+### General
 
-Each website repo has a `predev` script that will (renew the) link to `rsv-shared`.
+- We never work on the rsv-shared repo directly.
+- Instead we work on the website repo, then check in changes into the submodule from within that repo.
+- Afterwards we have to sync those changes to the other repos.
 
-```
-  "predev": "npm run link-rsv-shared",
-  "link-rsv-shared": "bun ../rsv-shared/scripts/link-packages.ts",
-```
+### `predev`: Ensure latest submodule
 
-Those links do not change the websites' `package.json`; they only overwrite the locale package in `node_modules` with a symlink to the local folder.
+Before we start the dev server, we ensure that our submodule is clean (everything is comitted) and fetch the latest submodule code.
+TODO LINK SCRIPT
 
-### Ensure shared package is pushed (automated)
+### `pre-push` (Husky): Ensure a neat submodule
 
-See [`ensure-push.ts`](./scripts/ensure-push.ts).
+Before we push the website project, we ensure that our submodule is clean (everythign is committed) and pushed.
+TODO LINK SCRIPT
 
-Each website repo runs a script via husky `pre-push` which ensures that all changes of the local package are pushed to origin.
-If not, the website repo push fails.
+### Update all projects
 
-We do this to make sure the website builds with the same data that we run locally.
+After we changed something, we should update all other projects.
+We have a helper scripts that will traverse the `rsv-landingages` folders
 
-### Ensure website repo uses latest shared package (automated)
+#### `bun run shared/scripts/all-update.ts`
 
-See [`update-package.ts`](./scripts/update-package.ts).
+- Check the state of the repo (eg. no pending changes)
+- Fetch and commit the submodule
 
-Since we don't publish rsv-shared to NPM, we cannot rely on version ranges to install the latest package.
-Instead each website repo runs a second script via husky `pre-push` which installs the latest version of the package and commits the change.
+#### `bun run shared/scripts/all-push.ts`
+
+- Run npm run check on each Repo.
+- Push changes.
