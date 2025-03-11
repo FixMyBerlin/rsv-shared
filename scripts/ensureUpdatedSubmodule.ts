@@ -39,7 +39,7 @@ export const enshureUpdatedSubmodules = async () => {
   }
 
   // Step 3: Update the submodule (rebase)
-  const { stdout: pullStatus } = await $`git pull`.cwd(submodulePath).quiet()
+  const { stdout: pullStatus } = await $`git pull --rebase`.cwd(submodulePath).quiet()
   const pullStatusString = pullStatus.toString('utf-8')
 
   if (
