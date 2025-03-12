@@ -5,6 +5,7 @@ import type { FeatureCollection } from 'geojson'
 import routesegmentFeatures from 'src/content/routeGeoData/uploadSegements.json'
 import { BaseMap } from './BaseMap'
 import { linePaintSimpleMap } from './statusDefinition'
+
 type Props = {
   label: string
 }

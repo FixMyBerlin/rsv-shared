@@ -4,6 +4,7 @@ import doneIcon from '@shared/sections/maps/statusIcons/done.png'
 import ideaIcon from '@shared/sections/maps/statusIcons/idea.png'
 import in_progressIcon from '@shared/sections/maps/statusIcons/in_progress.png'
 import planningIcon from '@shared/sections/maps/statusIcons/planning.png'
+import type { LineLayerSpecification } from 'react-map-gl/maplibre'
 
 export const routeSegmentStatus: {
   [key: string]: { color: string; icon: ImageMetadata; label: string; colorClass: string }
@@ -54,7 +55,7 @@ const statusLineStyling = [
   'done',
   routeSegmentStatus.done.color,
   /* default */ '#ff0000', // has no status
-]
+] satisfies Required<LineLayerSpecification>['paint']['line-color']
 
 export const getLinePaintRouteMap = (focusSegment?: string) => {
   return {
@@ -62,7 +63,7 @@ export const getLinePaintRouteMap = (focusSegment?: string) => {
     'line-color': focusSegment
       ? ['case', ['==', ['get', 'subsectionSlug'], focusSegment], statusLineStyling, '#6B7280']
       : statusLineStyling,
-  }
+  } satisfies LineLayerSpecification['paint']
 }
 
 export const linePaintSimpleMap = { 'line-width': 4, 'line-color': COLORS.mapDefault }

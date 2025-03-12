@@ -49,17 +49,6 @@ export const BaseMap = ({
     ],
   }
 
-  const selectableLineFeaturesSource = (
-    <Source id="layer_selectable_features" type="geojson" data={geometries}>
-      <Layer
-        id="layer_selectable_features--lines"
-        type="line"
-        paint={linePaint}
-        filter={['==', '$type', 'LineString']}
-      />
-    </Source>
-  )
-
   const handleMouseMove = (e: MapLayerMouseEvent) => {
     const id = e.features?.at(0)?.properties['subsectionSlug']
     if (id) setSelected(id)
@@ -98,11 +87,17 @@ export const BaseMap = ({
         attributionControl={false}
         dragRotate={false}
         scrollZoom={isScreenHorizontal}
-        // @ts-expect-error: See https://github.com/visgl/react-map-gl/issues/2310
-        RTLTextPlugin={null}
+        RTLTextPlugin={undefined}
         interactiveLayerIds={['layer_selectable_features--lines']}
       >
-        {selectableLineFeaturesSource}
+        <Source id="layer_selectable_features" type="geojson" data={geometries}>
+          <Layer
+            id="layer_selectable_features--lines"
+            type="line"
+            paint={linePaint}
+            filter={['==', '$type', 'LineString']}
+          />
+        </Source>
         {markers && markers}
         <AttributionControl compact={true} position="bottom-left" />
         <NavigationControl
