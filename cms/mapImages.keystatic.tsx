@@ -1,4 +1,5 @@
 import { collection, fields } from '@keystatic/core'
+import { ColorPicker } from './components/keystaticComponents/ColorPicker/ColorPicker'
 import { customIcons } from './components/MapImage/customIcons'
 
 export const keystaticMapImagesConfig = collection({
@@ -47,11 +48,12 @@ export const keystaticMapImagesConfig = collection({
           ],
           defaultValue: 'line',
         }),
-        color: fields.text({
+        color: ColorPicker({
           label: 'Farbe (Hex)',
           description:
             'Format: #006EFF. Dieses Feld wird ignoriert, wenn als Form "Icon" ausgewählt wurde.',
           validation: { isRequired: true },
+          defaultValue: '#000',
         }),
         iconKey: fields.text({
           label: 'Icon Schlüssel',
