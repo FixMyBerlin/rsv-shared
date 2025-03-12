@@ -6,6 +6,7 @@ import { consoleLogSubjectIntro, consoleLogSubjectOutroSuccess } from './utils/c
 const zodBASE_CONFIG = z
   .object({
     CMS_NAME: z.string(),
+    CMS_LOGO_PATH: z.string(),
     GITHUB_REPO_NAME: z.string(),
     PRODUCTION_URL: z.string().url(),
     META: z
