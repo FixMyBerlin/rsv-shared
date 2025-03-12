@@ -10,11 +10,5 @@ export const keystaticrouteGeoUploadConfig = singleton({
         'JSON-Datei - Dateiendung .json (!) - mit Punktdaten für Detailinfos hochladen. Prozess ist auf /route/admin beschrieben. Mit dem Speichern werden die Daten ersetzt. Übersicht über die Zuordnung undter /route/admin.',
       validation: { isRequired: true },
     }),
-    uploadDetails: fields.file({
-      label: 'Geo Upload Detailinfos',
-      description:
-        'JSON-Datei - Dateiendung .json (!) - mit Punktdaten für Detailinfos hochladen. Prozess ist auf /route/admin beschrieben. Mit dem Speichern werden die Daten ersetzt. Übersicht über die Zuordnung undter /route/admin.',
-      validation: { isRequired: true },
-    }),
   },
 })

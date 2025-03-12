@@ -1,4 +1,4 @@
-import routesegmentDetailsGeoData from '@src/content/routeGeoData/uploadDetails.json'
+import { parseLatLngString } from '@shared/cms/components/keystaticComponents/MapPoint/parseLatLngString'
 import type { CollectionEntry } from 'astro:content'
 import { Marker } from 'react-map-gl/maplibre'
 import { RouteMap } from './RouteMap'
@@ -8,6 +8,7 @@ type Props = {
   segmentFocusSlug?: string
   routesegmentDetails: CollectionEntry<'routesegmentdetails'>[]
 }
+
 export const RoutesegmentMap = ({
   routesegments,
   segmentFocusSlug,
@@ -15,15 +16,13 @@ export const RoutesegmentMap = ({
 }: Props) => {
   const routesegmentDetailMarkers = routesegmentDetails
     .map((detail) => {
-      const matchingDetailGeo = routesegmentDetailsGeoData.features.find(
-        (d) => d.properties.detailId === Number(detail.data.detailId),
-      )
-      if (!matchingDetailGeo) return null
+      const point = parseLatLngString(detail.data.latLng)
+      if (!point) return null
       return (
         <Marker
-          key={matchingDetailGeo.properties.detailId}
-          longitude={matchingDetailGeo.geometry.coordinates[0] as number}
-          latitude={matchingDetailGeo.geometry.coordinates[1] as number}
+          key={detail.data.latLng}
+          latitude={point.lat}
+          longitude={point.lng}
           className="flex h-9 w-9 items-center justify-center rounded-full border bg-white shadow-lg"
         >
           <div className="text-base font-extrabold">{detail?.data.position}</div>

@@ -5,6 +5,5 @@ export const astroRouteGeoUploadDefinition = defineCollection({
   schema: () =>
     z.object({
       uploadSegements: z.string(),
-      uploadDetails: z.string(),
     }),
 })

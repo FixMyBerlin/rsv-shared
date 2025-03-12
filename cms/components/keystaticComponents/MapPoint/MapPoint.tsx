@@ -18,6 +18,7 @@ import {
   type ViewStateChangeEvent,
 } from 'react-map-gl/maplibre'
 import { FieldDataError } from '../copiedFromKeystatic/error'
+import { parseLatLngString } from './parseLatLngString'
 
 function parseAsNormalField(value: FormFieldStoredValue) {
   if (value === undefined) {
@@ -57,12 +58,7 @@ export function MapPoint({
     }
     return value
   }
-  function parse(input: string) {
-    if (!input.includes(',')) return undefined
 
-    const [lat, lng] = input.split(',').map(Number)
-    return { lng, lat }
-  }
   return {
     // not sure what this one does? why is its only value 'form'?
     kind: 'form',
@@ -80,7 +76,7 @@ export function MapPoint({
         latitude: markerFallback.geometry.coordinates[1],
       }
 
-      const parsedInput = parse(props.value)
+      const parsedInput = parseLatLngString(props.value)
       const [viewState, setViewState] = useState<
         Pick<ViewState, 'latitude' | 'longitude' | 'zoom'>
       >({
