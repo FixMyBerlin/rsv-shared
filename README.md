@@ -58,3 +58,7 @@ After we changed something, we should update all other projects.
 - Run npm run check on each Repo.
 - Push changes.
 -->
+
+## Initialize
+
+`git submodule add https://github.com/FixMyBerlin/rsv-shared.git shared`
