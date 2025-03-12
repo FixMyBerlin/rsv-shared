@@ -18,11 +18,6 @@ export const keystaticRoutesegmentdetailsConfig = collection({
       collection: 'routesegments',
       description: 'Der Abschnitt (Planungsabschnitt), zu dem dieses Detail gehört.',
     }),
-    detailId: fields.text({
-      label: 'Detail-ID',
-      description:
-        'Wenn es zu dieser Detailinfo eine Geometrie gibt (aus Detailinfos Geo Upload), dann muss hier eine Detail-ID vergeben werden und diese in den Properties der passenden Punktgeometrie als detailId gespeichert sein.',
-    }),
     latLng: MapPoint({
       label: 'Punkt auf der Karte',
       referenceGeometry: routesegmentFeatures as FeatureCollection,
