@@ -1,18 +1,22 @@
-import { FONTNAME, GITHUB_REPO_NAME, META } from '@config/config'
+import { BASE_CONFIG } from '@config/config'
 import { COLORS, COLORSCLASSES, LINKCLASSES } from '@config/styles'
 import { z } from 'astro/zod'
 import { consoleLogSubjectIntro, consoleLogSubjectOutroSuccess } from './utils/consoleLog'
 
-const zodGITHUB_REPO_NAME = z.string()
-
-const zodMETA = z
+const zodBASE_CONFIG = z
   .object({
-    title: z.string(),
-    description: z.string(),
+    GITHUB_REPO_NAME: z.string(),
+    PRODUCTION_URL: z.string().url(),
+    META: z
+      .object({
+        title: z.string(),
+        description: z.string(),
+      })
+      .strict(),
+    FONTNAME: z.string(),
+    USE_MATOMO: z.boolean(),
   })
   .strict()
-
-const zodFONTNAME = z.string()
 
 const zodLINKCLASSES = z
   .object({
@@ -67,9 +71,7 @@ const zodCOLORS = z
 export const validateConfig = () => {
   consoleLogSubjectIntro('Validate configs')
 
-  zodGITHUB_REPO_NAME.parse(GITHUB_REPO_NAME)
-  zodMETA.parse(META)
-  zodFONTNAME.parse(FONTNAME)
+  zodBASE_CONFIG.parse(BASE_CONFIG)
   zodLINKCLASSES.parse(LINKCLASSES)
 
   zodLINKCLASSES.parse(LINKCLASSES)
