@@ -4,7 +4,7 @@ import { validateConfig } from './validateConfig'
 
 async function main() {
   await pullSubmodule()
-  await commitSubmoduleInWebsite()
+  await commitSubmoduleInWebsite({ exitWhenSubmoduleNotPushed: false })
   validateConfig()
 }
 

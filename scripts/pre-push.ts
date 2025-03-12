@@ -5,7 +5,7 @@ import { pushSubmodule } from './pushSubmodule'
 async function main() {
   await pullSubmodule()
   await pushSubmodule()
-  await commitSubmoduleInWebsite()
+  await commitSubmoduleInWebsite({ exitWhenSubmoduleNotPushed: true })
 }
 
 main()

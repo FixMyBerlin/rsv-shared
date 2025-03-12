@@ -5,7 +5,12 @@ import {
   consoleLogSubjectOutroSuccess,
 } from './utils/consoleLog'
 
-export const commitSubmoduleInWebsite = async () => {
+type Props = {
+  /** @desc We commit the submodule here. During `pre-dev` that is all we need to do (`false`). But during `per-push` we need to exit in order ro restart the push (`true`). See log notice for more. */
+  exitWhenSubmoduleNotPushed: boolean
+}
+
+export const commitSubmoduleInWebsite = async ({ exitWhenSubmoduleNotPushed }: Props) => {
   $.env({ LANG: 'en_US.UTF-8' })
   consoleLogSubjectIntro('Commit submodule on website repo…')
 
@@ -45,8 +50,8 @@ export const commitSubmoduleInWebsite = async () => {
 
   // Step 3: Commit
   const commitMessage = [
-    'Update rsv-shared to latest version',
-    'Done by \`rsv-shared/shared/scripts/commitSubmoduleInWebsite.ts\`',
+    'Update `rsv-shared` to latest version',
+    'Done by `rsv-shared/shared/scripts/commitSubmoduleInWebsite.ts`',
     'https://github.com/FixMyBerlin/rsv-shared/',
   ].join('\n\n')
   const { stderr: pushStatus } = await $`git commit -m "${commitMessage}"`.quiet()
@@ -59,11 +64,13 @@ export const commitSubmoduleInWebsite = async () => {
 
   consoleLogSubjectOutroSuccess('Submodule committed', '(But not pushed, yet.)')
 
-  // Step 4: EXIT so we can restart…
-  consoleLogSubjectError(`
+  // Step 4: EXIT so we can restart… – but only in some szenarios (`exitWhenSubmoduleNotPushed`)
+  if (exitWhenSubmoduleNotPushed === true) {
+    consoleLogSubjectError(`
 Push stopped. You need to re-trigger the push to include all changes.
 The pre-push script created a new commit to ensure the latest submodule is included.
 This new commit is not part of the current push.
 Therefore, we stopped the current push to restart it and include everything.`)
-  process.exit(1)
+    process.exit(1)
+  }
 }
