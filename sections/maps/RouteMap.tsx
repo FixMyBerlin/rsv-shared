@@ -33,16 +33,17 @@ export const RouteMap = ({
       <div className="flex items-center gap-2 p-1">
         {segment.properties.status && (
           <div
+            data-status={segment.properties.status}
             className={clsx(
               'flex size-6 flex-none items-center justify-center rounded-full',
               (focusSegemntId && focusSegemntId === segment.properties.subsectionSlug) ||
                 !focusSegemntId
-                ? routeSegmentStatus[segment.properties.status].colorClass
+                ? routeSegmentStatus.get(segment.properties.status)?.colorClass
                 : 'bg-gray-400',
             )}
           >
             <img
-              src={routeSegmentStatus[segment.properties.status].icon.src}
+              src={routeSegmentStatus.get(segment.properties.status)?.icon.src}
               alt=""
               className="h-5 w-5"
             />

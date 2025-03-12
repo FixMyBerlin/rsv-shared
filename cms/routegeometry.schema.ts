@@ -1,5 +1,7 @@
 import { z } from 'astro/zod'
 
+const statusOptions = ['In Planung'] as const
+
 const position = z.tuple([z.number(), z.number()])
 const geometryLinestring = z.strictObject({
   type: z.literal('LineString'),
@@ -10,7 +12,7 @@ const properties = z.strictObject({
   projectSlug: z.string(),
   operator: z.string(),
   estimatedCompletionDateString: z.string().nullish(),
-  status: z.string().nullish(),
+  status: z.enum(statusOptions).nullish(),
 })
 export const ApiRouteGeometryFeatureSchema = z.strictObject({
   type: z.literal('Feature'),
