@@ -5,7 +5,7 @@ import { linePaintSimpleMap } from '@shared/sections/maps/statusDefinition'
 import * as turf from '@turf/turf'
 import { ASTRO_ENV } from 'astro:env/client'
 import type { FeatureCollection } from 'geojson'
-import 'maplibre-gl/dist/maplibre-gl.css'
+// import 'maplibre-gl/dist/maplibre-gl.css' // This does not work on Netlify or `npm run build:node`. Instead we import the `latest` css below as a HTML Tag.
 import { useState } from 'react'
 import {
   AttributionControl,
@@ -110,6 +110,11 @@ export function MapPoint({
           errorMessage={validationMessage(props.value)}
         >
           <>
+            {/* REMINDER: We are using the `latest` here which migth be wrong. See import statement for more. */}
+            <link
+              href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css"
+              rel="stylesheet"
+            />
             {ASTRO_ENV === 'development' && (
               <pre>
                 {JSON.stringify(
