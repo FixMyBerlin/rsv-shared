@@ -1,13 +1,10 @@
 ---
 import { mdxComponentsAstro } from '@shared/cms/components/mdxComponentsAstro.astro'
 import Section from '@shared/layouts/Section.astro'
-import type { Segment } from '@src/pages/route/[slug].astro'
 import { getCollection, getEntry, type CollectionEntry } from 'astro:content'
 import RoutespageRoutesegmentDetail from './RoutespageRoutesegmentDetail.astro'
 
-type Props = { route: Segment }
-
-export type Segmentdetail = CollectionEntry<'routesegmentdetails'>
+type Props = { route: CollectionEntry<'routesegments'> }
 
 const { route } = Astro.props
 const { Content } = await route.render()

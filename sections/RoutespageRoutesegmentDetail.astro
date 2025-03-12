@@ -1,9 +1,9 @@
 ---
 import { mdxComponentsAstro } from '@shared/cms/components/mdxComponentsAstro.astro'
 import Section from '@shared/layouts/Section.astro'
-import type { Segmentdetail } from './RoutespageRoutesegment.astro'
+import type { CollectionEntry } from 'astro:content'
 
-type Props = { detail: Segmentdetail }
+type Props = { detail: CollectionEntry<'routesegmentdetails'> }
 const { detail } = Astro.props
 const { Content } = await detail.render()
 ---
