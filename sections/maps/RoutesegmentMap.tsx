@@ -1,15 +1,17 @@
 import { parseLatLngString } from '@shared/cms/components/keystaticComponents/MapPoint/parseLatLngString'
-import type { CollectionEntry } from 'astro:content'
+import type { CollectionEntry, InferEntrySchema } from 'astro:content'
 import { Marker } from 'react-map-gl/maplibre'
 import { RouteMap } from './RouteMap'
 
 type Props = {
+  geometry: InferEntrySchema<'routegeometry'>[]
   routesegments: CollectionEntry<'routesegments'>[]
   segmentFocusSlug?: string
   routesegmentDetails: CollectionEntry<'routesegmentdetails'>[]
 }
 
 export const RoutesegmentMap = ({
+  geometry,
   routesegments,
   segmentFocusSlug,
   routesegmentDetails,
@@ -35,6 +37,7 @@ export const RoutesegmentMap = ({
 
   return (
     <RouteMap
+      geometry={geometry}
       routesegments={routesegments}
       focusSegemntId={focusSegemntId}
       routesegmentDetailMarkers={routesegmentDetailMarkers}

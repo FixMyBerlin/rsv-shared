@@ -5,6 +5,7 @@ import { consoleLogSubjectIntro, consoleLogSubjectOutroSuccess } from './utils/c
 
 const zodBASE_CONFIG = z
   .object({
+    CMS_NAME: z.string(),
     GITHUB_REPO_NAME: z.string(),
     PRODUCTION_URL: z.string().url(),
     META: z
@@ -15,6 +16,7 @@ const zodBASE_CONFIG = z
       .strict(),
     FONTNAME: z.string(),
     USE_MATOMO: z.boolean(),
+    TRASSENSCOUT_PROJECT_API_URL: z.array(z.string().url()),
   })
   .strict()
 

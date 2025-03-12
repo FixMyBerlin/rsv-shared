@@ -2,15 +2,17 @@
 import { RouteMap } from '@shared/sections/maps/RouteMap'
 import { RoutesegmentMap } from '@shared/sections/maps/RoutesegmentMap'
 import { SimpleMap } from '@shared/sections/maps/SimpleMap'
-
-import { getCollection, getEntry, type CollectionEntry } from 'astro:content'
+import { getCollection, getEntry } from 'astro:content'
 
 const { type } = Astro.props
 
-export type Segmentdetail = CollectionEntry<'routesegmentdetails'>
-
 const routesegments = await getCollection('routesegments')
+
+const routeGeometryCollection = await getCollection('routegeometry')
+const routeGeometry = routeGeometryCollection.map((entry) => entry.data)
+
 const routesegmentDetails = await getCollection('routesegmentdetails')
+
 const homepage = await getEntry('homepage', 'index')
 ---
 
@@ -18,6 +20,7 @@ const homepage = await getEntry('homepage', 'index')
   {
     type.discriminant === 'routesegmentmap' && (
       <RoutesegmentMap
+        geometry={routeGeometry}
         routesegments={routesegments}
         segmentFocusSlug={type.value}
         routesegmentDetails={routesegmentDetails
@@ -28,6 +31,14 @@ const homepage = await getEntry('homepage', 'index')
     )
   }
 
-  {type.discriminant === 'routemap' && <RouteMap routesegments={routesegments} client:load />}
-  {type.discriminant === 'basic' && <SimpleMap label={homepage?.data.title || ''} client:load />}
+  {
+    type.discriminant === 'routemap' && (
+      <RouteMap geometry={routeGeometry} routesegments={routesegments} client:load />
+    )
+  }
+  {
+    type.discriminant === 'basic' && (
+      <SimpleMap geometry={routeGeometry} label={homepage?.data.title || ''} client:load />
+    )
+  }
 </div>

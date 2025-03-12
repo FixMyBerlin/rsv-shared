@@ -1,24 +1,28 @@
-import { along, length, lineString } from '@turf/turf'
-import type { CollectionEntry } from 'astro:content'
+import { along, featureCollection, length, lineString } from '@turf/turf'
+import type { CollectionEntry, InferEntrySchema } from 'astro:content'
 import clsx from 'clsx'
-import type { FeatureCollection } from 'geojson'
 import { useState } from 'react'
 import { Marker } from 'react-map-gl/maplibre'
-import routesegmentFeatures from 'src/content/routeGeoData/uploadSegements.json'
 import { BaseMap } from './BaseMap'
 import { TipMarker } from './TipMarker'
 import { getLinePaintRouteMap, routeSegmentStatus } from './statusDefinition'
 
 type Props = {
+  geometry: InferEntrySchema<'routegeometry'>[]
   routesegments: CollectionEntry<'routesegments'>[]
   focusSegemntId?: string
   routesegmentDetailMarkers?: React.ReactNode[]
 }
 
-export const RouteMap = ({ routesegments, focusSegemntId, routesegmentDetailMarkers }: Props) => {
+export const RouteMap = ({
+  geometry,
+  routesegments,
+  focusSegemntId,
+  routesegmentDetailMarkers,
+}: Props) => {
   const [selectedSegment, setSelectedSegment] = useState<string | null>(null)
 
-  const markers = routesegmentFeatures.features.map((segment) => {
+  const markers = geometry.map((segment) => {
     const midLine = lineString(segment.geometry.coordinates)
     const midLengthHalf = length(midLine) / 2
     const midPoint = along(midLine, midLengthHalf)
@@ -98,7 +102,7 @@ export const RouteMap = ({ routesegments, focusSegemntId, routesegmentDetailMark
       <BaseMap
         setSelected={setSelectedSegment}
         markers={routesegmentDetailMarkers ? [...markers, ...routesegmentDetailMarkers] : markers}
-        geometries={routesegmentFeatures as FeatureCollection}
+        geometries={featureCollection(geometry)}
         focusSegment={focusSegemntId}
         handleRouteClick={handleRouteClick}
         linePaint={getLinePaintRouteMap(focusSegemntId)}

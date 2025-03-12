@@ -5,10 +5,10 @@ import ImageFigcaption from '../ImageFigcaption.astro'
 import { customIcons } from './customIcons'
 
 const { relationship } = Astro.props
-const mapImage = await getEntry('maps', relationship)
+const mapImage = await getEntry('mapImages', relationship)
 if (mapImage === undefined) return Astro.redirect('/404')
 
-const { legend, image, imageAlt, imageCopyright } = mapImage.data as InferEntrySchema<'maps'>
+const { legend, image, imageAlt, imageCopyright } = mapImage.data as InferEntrySchema<'mapImages'>
 ---
 
 <figure>

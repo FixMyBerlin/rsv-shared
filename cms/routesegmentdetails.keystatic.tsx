@@ -1,7 +1,6 @@
 import { collection, fields } from '@keystatic/core'
 import type { FeatureCollection } from 'geojson'
-import 'maplibre-gl/dist/maplibre-gl.css'
-import routesegmentFeatures from 'src/content/routeGeoData/uploadSegements.json'
+import cachedRouteGeometry from 'public/TEMP/routegeometry.json'
 import { MapPoint } from './components/keystaticComponents/MapPoint/MapPoint'
 import { mdxComponentsKeystatic } from './components/mdxComponentsKeystatic'
 
@@ -20,7 +19,7 @@ export const keystaticRoutesegmentdetailsConfig = collection({
     }),
     latLng: MapPoint({
       label: 'Punkt auf der Karte',
-      referenceGeometry: routesegmentFeatures as FeatureCollection,
+      referenceGeometry: cachedRouteGeometry as FeatureCollection,
       validation: { isRequired: false },
     }),
     position: fields.number({ label: 'Position', validation: { isRequired: true } }),
