@@ -23,24 +23,28 @@ export const astroRouteGeometryDefinition = defineCollection({
           raw.status,
           raw.statusText,
         )
-        // throw new Error(`Fetching data from TS failed; check the API ${apiUrl}`)
+        throw new Error(`Fetching data from TS failed; check the API ${apiUrl}`)
       }
       const json = await raw.json()
-      const parsed = ApiRouteGeometrySchema.parse(json)
-      parsed.features.forEach((feature) => {
-        const featureWithId = {
-          id: feature.properties.subsectionSlug,
-          ...feature,
-        }
-        features.push(featureWithId)
-      })
+      const parsed = ApiRouteGeometrySchema.safeParse(json)
+      if (parsed.success) {
+        parsed.data.features.forEach((feature) => {
+          const featureWithId = {
+            id: feature.properties.subsectionSlug,
+            ...feature,
+          }
+          features.push(featureWithId)
+        })
+      } else {
+        console.error('Fetching data from TS failed during ZOD parsing', apiUrl, parsed.error)
+      }
     }
 
     if (features.length === 0) {
       console.error('Fetching data from TS; no geometries found')
-      // throw new Error(
-      //   `Fetching data from TS; no geometries found ${JSON.stringify(BASE_CONFIG.TRASSENSCOUT_PROJECT_API_URL)}`,
-      // )
+      throw new Error(
+        `Fetching data from TS; no geometries found ${JSON.stringify(BASE_CONFIG.TRASSENSCOUT_PROJECT_API_URL)}`,
+      )
     }
 
     // For our CMS we need a JSON version that we can load from the file system

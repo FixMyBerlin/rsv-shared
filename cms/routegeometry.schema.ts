@@ -10,7 +10,7 @@ const geometryLinestring = z.strictObject({
 const properties = z.strictObject({
   subsectionSlug: z.string(),
   projectSlug: z.string(),
-  operator: z.string(),
+  operator: z.string().nullish(),
   estimatedCompletionDateString: z.string().nullish(),
   status: z.enum(statusOptions).nullish(),
 })
