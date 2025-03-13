@@ -4,7 +4,6 @@ import {
   consoleLogSubjectIntro,
   consoleLogSubjectNote,
   consoleLogSubjectOutroSuccess,
-  consoleLogSubjectWarning,
 } from './utils/consoleLog'
 
 export const pullSubmodule = async () => {
@@ -28,19 +27,10 @@ export const pullSubmodule = async () => {
     process.exit(1)
   }
 
-  // Step 2: Warn about unpushed changes
-  const { stderr: pushStatus } = await $`git push --dry-run`.cwd(submodulePath).quiet()
-  const pushStatusString = pushStatus.toString('utf-8')
-
-  if (!pushStatusString.includes('Everything up-to-date')) {
-    consoleLogSubjectWarning(
-      'There are unpushed commits in the submodule.',
-      'We will rebase them if needed.',
-    )
-  }
-
-  // Step 3: Update the submodule (rebase)
-  const { stdout: pullStatus } = await $`git pull --rebase`.cwd(submodulePath).quiet()
+  // Step 2: Update the submodule (rebase)
+  const { stdout: pullStatus, stdout: pullError } = await $`git pull --rebase`
+    .cwd(submodulePath)
+    .quiet()
   const pullStatusString = pullStatus.toString('utf-8')
 
   if (
@@ -50,6 +40,7 @@ export const pullSubmodule = async () => {
   ) {
     consoleLogSubjectError('Pulling remote changes failed. Please update manually.', {
       pullStatusString,
+      pullError: pullError.toString('utf-8'),
     })
     process.exit(1)
   }
