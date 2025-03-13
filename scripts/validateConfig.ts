@@ -15,7 +15,6 @@ const zodBASE_CONFIG = z
         description: z.string(),
       })
       .strict(),
-    FONTNAME: z.string(),
     USE_MATOMO: z.boolean(),
     TRASSENSCOUT_PROJECT_API_URL: z.array(z.string().url()),
   })
