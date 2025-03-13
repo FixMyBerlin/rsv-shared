@@ -109,7 +109,7 @@ export const RouteMap = ({
         linePaint={getLinePaintRouteMap(focusSegemntId)}
       />
       <div className="grid w-full grid-cols-3 gap-3 bg-gray-200 p-2 sm:grid-cols-4 md:grid-cols-5">
-        {Object.entries(routeSegmentStatus).map(([status, { colorClass, icon, label }]) => (
+        {Array.from(routeSegmentStatus).map(([status, { colorClass, icon, label }]) => (
           <div key={status} className="flex items-center gap-2 pl-4">
             <div
               className={clsx('flex h-6 w-6 items-center justify-center rounded-full', colorClass)}
