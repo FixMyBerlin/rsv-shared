@@ -49,7 +49,7 @@ export const astroRouteGeometryDefinition = defineCollection({
 
     // For our CMS we need a JSON version that we can load from the file system
     // We therefore write a version of the data into public/temp
-    const outputPath = join(process.cwd(), 'public', 'TEMP', 'routegeometry.json')
+    const outputPath = join(process.cwd(), 'src', 'content_cache', 'routegeometry.json')
     await writeFile(
       outputPath,
       JSON.stringify(featureCollection(features.sort((a, b) => a.id.localeCompare(b.id))), null, 2),

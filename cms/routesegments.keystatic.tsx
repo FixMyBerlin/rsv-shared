@@ -1,5 +1,11 @@
 import { collection, fields } from '@keystatic/core'
+import cachedRouteGeometry from 'src/content_cache/routegeometry.json'
 import { mdxComponentsKeystatic } from './components/mdxComponentsKeystatic'
+
+const tsSlugs = cachedRouteGeometry.features.map((f) => ({
+  label: `${f.id} — ${f.properties.operator} – ${f.properties.status}`,
+  value: f.id,
+}))
 
 export const keystaticRoutesegmentsConfig = collection({
   label: 'Abschnitte',
@@ -9,10 +15,13 @@ export const keystaticRoutesegmentsConfig = collection({
   format: { contentField: 'body' },
   schema: {
     title: fields.slug({ name: { label: 'Titel' } }),
-    tsSlug: fields.text({
+    tsSlug: fields.select({
       label: 'Trassenscout Slug',
       description:
         'Hier den Slug des Planungsabschnittes aus dem TS angeben (im GeoJSON ist es die property `subsectionSlug`), damit dem Abschnitt eine Geometrie zugeordnet werden kann.',
+
+      options: tsSlugs,
+      defaultValue: tsSlugs[0].value,
     }),
     operator: fields.text({ label: 'Baulastträger' }),
     contact: fields.text({ label: 'Ansprechpartner*in' }),

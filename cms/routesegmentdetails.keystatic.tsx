@@ -1,6 +1,6 @@
 import { collection, fields } from '@keystatic/core'
 import type { FeatureCollection } from 'geojson'
-import cachedRouteGeometry from 'public/TEMP/routegeometry.json'
+import cachedRouteGeometry from 'src/content_cache/routegeometry.json'
 import { MapPoint } from './components/keystaticComponents/MapPoint/MapPoint'
 import { mdxComponentsKeystatic } from './components/mdxComponentsKeystatic'
 
