@@ -21,9 +21,13 @@ export const ApiRouteGeometryFeatureSchema = z.strictObject({
 })
 export type ApiRouteGeometryFeature = z.infer<typeof ApiRouteGeometryFeatureSchema>
 
-export const RouteGeometryFeatureSchema = ApiRouteGeometryFeatureSchema.merge(
-  z.object({ id: z.string() }),
-)
+export const RouteGeometryFeatureSchema = z.object({
+  id: z.string(),
+  type: z.literal('Feature'),
+  properties: properties,
+  geometry: geometryLinestring,
+})
+
 export type RouteGeometryFeature = z.infer<typeof RouteGeometryFeatureSchema>
 
 export const ApiRouteGeometrySchema = z.object({

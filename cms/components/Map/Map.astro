@@ -8,8 +8,8 @@ const { type } = Astro.props
 
 const routesegments = await getCollection('routesegments')
 
-const routeGeometryCollection = await getCollection('routegeometry')
-const routeGeometry = routeGeometryCollection.map((entry) => entry.data)
+const routeGeometries = await getCollection('routegeometries')
+const routeFatures = routeGeometries.map((entry) => entry.data)
 
 const routesegmentDetails = await getCollection('routesegmentdetails')
 
@@ -20,7 +20,7 @@ const homepage = await getEntry('homepage', 'index')
   {
     type.discriminant === 'routesegmentmap' && (
       <RoutesegmentMap
-        geometry={routeGeometry}
+        features={routeFatures}
         routesegments={routesegments}
         segmentFocusSlug={type.value}
         routesegmentDetails={routesegmentDetails
@@ -33,12 +33,12 @@ const homepage = await getEntry('homepage', 'index')
 
   {
     type.discriminant === 'routemap' && (
-      <RouteMap geometry={routeGeometry} routesegments={routesegments} client:load />
+      <RouteMap features={routeFatures} routesegments={routesegments} client:load />
     )
   }
   {
     type.discriminant === 'basic' && (
-      <SimpleMap geometry={routeGeometry} label={homepage?.data.title || ''} client:load />
+      <SimpleMap features={routeFatures} label={homepage?.data.title || ''} client:load />
     )
   }
 </div>

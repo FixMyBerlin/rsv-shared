@@ -1,4 +1,4 @@
-import { MAPTILER_STYLE, MAXZOOM, MINZOOM } from '@config/map.ts'
+import { MAP_CONFIG } from '@config/map.ts'
 import * as turf from '@turf/turf'
 import type { FeatureCollection } from 'geojson'
 import 'maplibre-gl/dist/maplibre-gl.css'
@@ -15,7 +15,7 @@ import {
 import { useScreenHorizontal } from './useScreenHorizontal'
 
 type Props = {
-  geometries: FeatureCollection
+  featureCollection: FeatureCollection
   markers?: React.ReactNode[]
   setSelected?: any
   focusSegment?: string
@@ -24,7 +24,7 @@ type Props = {
 }
 
 export const BaseMap = ({
-  geometries,
+  featureCollection,
   markers,
   setSelected,
   focusSegment,
@@ -35,12 +35,13 @@ export const BaseMap = ({
   const [cursorStyle, setCursorStyle] = useState('grab')
 
   const bbox = turf.bbox(
-    focusSegment && geometries.features.find((f) => f.properties?.subsectionSlug === focusSegment)
+    focusSegment &&
+      featureCollection.features.find((f) => f.properties?.subsectionSlug === focusSegment)
       ? turf.featureCollection([
           // @ts-expect-error we check for focusSegment above
-          geometries.features.find((f) => f.properties.subsectionSlug === focusSegment),
+          featureCollection.features.find((f) => f.properties.subsectionSlug === focusSegment),
         ])
-      : geometries,
+      : featureCollection,
   )
   const initialMapViewCustom: { bounds: LngLatBoundsLike } = {
     bounds: [
@@ -70,9 +71,9 @@ export const BaseMap = ({
           },
         }}
         // maxBounds={MAX_BOUNDS}
-        minZoom={MINZOOM}
-        maxZoom={MAXZOOM}
-        mapStyle={MAPTILER_STYLE}
+        minZoom={MAP_CONFIG.MINZOOM}
+        maxZoom={MAP_CONFIG.MAXZOOM}
+        mapStyle={MAP_CONFIG.MAPTILER_STYLE}
         style={{ width: '100%', height: '100%' }}
         onMouseMove={handleMouseMove}
         onClick={handleMapClick}
@@ -90,7 +91,7 @@ export const BaseMap = ({
         RTLTextPlugin={undefined}
         interactiveLayerIds={['layer_selectable_features--lines']}
       >
-        <Source id="layer_selectable_features" type="geojson" data={geometries}>
+        <Source id="layer_selectable_features" type="geojson" data={featureCollection}>
           <Layer
             id="layer_selectable_features--lines"
             type="line"

@@ -8,21 +8,21 @@ import { TipMarker } from './TipMarker'
 import { getLinePaintRouteMap, routeSegmentStatus } from './statusDefinition'
 
 type Props = {
-  geometry: InferEntrySchema<'routegeometry'>[]
+  features: InferEntrySchema<'routegeometries'>[]
   routesegments: CollectionEntry<'routesegments'>[]
   focusSegemntId?: string
   routesegmentDetailMarkers?: React.ReactNode[]
 }
 
 export const RouteMap = ({
-  geometry,
+  features,
   routesegments,
   focusSegemntId,
   routesegmentDetailMarkers,
 }: Props) => {
   const [selectedSegment, setSelectedSegment] = useState<string | null>(null)
 
-  const markers = geometry.map((segment) => {
+  const markers = features.map((segment) => {
     const midLine = lineString(segment.geometry.coordinates)
     const midLengthHalf = length(midLine) / 2
     const midPoint = along(midLine, midLengthHalf)
@@ -104,7 +104,7 @@ export const RouteMap = ({
         <BaseMap
           setSelected={setSelectedSegment}
           markers={routesegmentDetailMarkers ? [...markers, ...routesegmentDetailMarkers] : markers}
-          geometries={featureCollection(geometry)}
+          featureCollection={featureCollection(features)}
           focusSegment={focusSegemntId}
           handleRouteClick={handleRouteClick}
           linePaint={getLinePaintRouteMap(focusSegemntId)}

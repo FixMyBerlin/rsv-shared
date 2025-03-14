@@ -1,12 +1,5 @@
 import { collection, fields } from '@keystatic/core'
-import cachedRouteGeometry from 'src/content_cache/routegeometry.json'
 import { mdxComponentsKeystatic } from './components/mdxComponentsKeystatic'
-
-const tsSlugs = cachedRouteGeometry.features.map((f) => ({
-  label: `${f.id} — ${f.properties.operator} – ${f.properties.status}`,
-  value: f.id,
-}))
-
 export const keystaticRoutesegmentsConfig = collection({
   label: 'Abschnitte',
   path: 'src/content/routesegments/*',
@@ -15,13 +8,23 @@ export const keystaticRoutesegmentsConfig = collection({
   format: { contentField: 'body' },
   schema: {
     title: fields.slug({ name: { label: 'Titel' } }),
-    tsSlug: fields.select({
+    // tsSlug: fields.select({
+    //   label: 'Trassenscout Slug',
+    //   description:
+    //     'Slug des Planungsabschnittes im Trassenscout (`subsectionSlug`), damit die Geometry zugeordnet werden kann.',
+    //   options: cachedRouteGeometry.features.map((feature) => {
+    //     return {
+    //       label: `${feature.id} — ${feature.properties.status || '(?)'} — ${feature.properties.operator || '(?)'}`,
+    //       value: feature.id,
+    //     }
+    //   }),
+    //   defaultValue: cachedRouteGeometry.features.map((feature) => feature.id).at(0)!,
+    // }),
+    tsSlug: fields.relationship({
       label: 'Trassenscout Slug',
       description:
-        'Hier den Slug des Planungsabschnittes aus dem TS angeben (im GeoJSON ist es die property `subsectionSlug`), damit dem Abschnitt eine Geometrie zugeordnet werden kann.',
-
-      options: tsSlugs,
-      defaultValue: tsSlugs[0].value,
+        'Slug des Planungsabschnittes im Trassenscout (`subsectionSlug`), damit die Geometry zugeordnet werden kann. Diese Liste enthält alle Planungsabschnitte die zum Zeitpunkt als die Zeite generiert wurde, über die API abgerufen werden konnten.',
+      collection: 'routegeometries',
     }),
     operator: fields.text({ label: 'Baulastträger' }),
     contact: fields.text({ label: 'Ansprechpartner*in' }),

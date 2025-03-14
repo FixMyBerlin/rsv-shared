@@ -1,4 +1,5 @@
 import { BASE_CONFIG } from '@config/config'
+import { MAP_CONFIG } from '@config/map'
 import { COLORS, COLORSCLASSES, LINKCLASSES } from '@config/styles'
 import { z } from 'astro/zod'
 import { consoleLogSubjectIntro, consoleLogSubjectOutroSuccess } from './utils/consoleLog'
@@ -17,6 +18,14 @@ const zodBASE_CONFIG = z
       .strict(),
     USE_MATOMO: z.boolean(),
     TRASSENSCOUT_PROJECT_API_URL: z.array(z.string().url()),
+  })
+  .strict()
+
+const zodMAP_CONFIG = z
+  .object({
+    MINZOOM: z.number().positive(),
+    MAXZOOM: z.number().positive(),
+    MAPTILER_STYLE: z.string().url(),
   })
   .strict()
 
@@ -75,6 +84,7 @@ export const validateConfig = () => {
 
   zodBASE_CONFIG.parse(BASE_CONFIG)
   zodLINKCLASSES.parse(LINKCLASSES)
+  zodMAP_CONFIG.parse(MAP_CONFIG)
 
   zodLINKCLASSES.parse(LINKCLASSES)
   zodCOLORSCLASSES.parse(COLORSCLASSES)

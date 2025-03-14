@@ -9,7 +9,7 @@ export const astroRoutesegmentsDefinition = defineCollection({
       contact: z.string().optional(),
       position: z.number(),
       markerPositionBottom: z.boolean().optional(),
-      tsSlug: z.string().optional(),
+      tsSlug: z.string(),
       documents: z
         .array(
           z.object({

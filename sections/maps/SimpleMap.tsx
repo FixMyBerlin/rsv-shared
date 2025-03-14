@@ -7,15 +7,15 @@ import { BaseMap } from './BaseMap'
 import { linePaintSimpleMap } from './statusDefinition'
 
 type Props = {
-  geometry: InferEntrySchema<'routegeometry'>[]
+  features: InferEntrySchema<'routegeometries'>[]
   label: string
 }
 
-export const SimpleMap = ({ geometry, label }: Props) => {
+export const SimpleMap = ({ features, label }: Props) => {
   return (
     <Section className="mb-20">
       <div className="relative h-[500px] w-full">
-        <BaseMap linePaint={linePaintSimpleMap} geometries={featureCollection(geometry)} />
+        <BaseMap linePaint={linePaintSimpleMap} featureCollection={featureCollection(features)} />
         <div className="flex w-full items-center gap-4 bg-gray-200 p-2 pl-6">
           <div className={clsx('h-1 w-7', COLORSCLASSES.legendSimpleMap)} />
           {label}

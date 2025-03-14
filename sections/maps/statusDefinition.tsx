@@ -1,5 +1,5 @@
 import { COLORS, COLORSCLASSES } from '@config/styles'
-import type { RouteGeometryFeature } from '@shared/cms/routegeometry.schema'
+import type { RouteGeometryFeature } from '@shared/cms/routegeometries.schema'
 import planningIcon from '@shared/sections/maps/statusIcons/planning.png'
 import type { LineLayerSpecification } from 'react-map-gl/maplibre'
 

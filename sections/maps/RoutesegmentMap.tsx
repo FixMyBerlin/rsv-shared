@@ -4,14 +4,14 @@ import { Marker } from 'react-map-gl/maplibre'
 import { RouteMap } from './RouteMap'
 
 type Props = {
-  geometry: InferEntrySchema<'routegeometry'>[]
+  features: InferEntrySchema<'routegeometries'>[]
   routesegments: CollectionEntry<'routesegments'>[]
   segmentFocusSlug?: string
   routesegmentDetails: CollectionEntry<'routesegmentdetails'>[]
 }
 
 export const RoutesegmentMap = ({
-  geometry,
+  features,
   routesegments,
   segmentFocusSlug,
   routesegmentDetails,
@@ -37,7 +37,7 @@ export const RoutesegmentMap = ({
 
   return (
     <RouteMap
-      geometry={geometry}
+      features={features}
       routesegments={routesegments}
       focusSegemntId={focusSegemntId}
       routesegmentDetailMarkers={routesegmentDetailMarkers}

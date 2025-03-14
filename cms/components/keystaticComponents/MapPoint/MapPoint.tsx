@@ -1,4 +1,4 @@
-import { MAPTILER_STYLE, MAXZOOM, MINZOOM } from '@config/map.ts'
+import { MAP_CONFIG } from '@config/map.ts'
 import { FieldPrimitive } from '@keystar/ui/field'
 import type { BasicFormField, FormFieldStoredValue } from '@keystatic/core'
 import { linePaintSimpleMap } from '@shared/sections/maps/statusDefinition'
@@ -157,9 +157,9 @@ export function MapPoint({
             <Map
               {...viewState}
               onMove={handleMapMove}
-              minZoom={MINZOOM}
-              maxZoom={MAXZOOM}
-              mapStyle={MAPTILER_STYLE}
+              minZoom={MAP_CONFIG.MINZOOM}
+              maxZoom={MAP_CONFIG.MAXZOOM}
+              mapStyle={MAP_CONFIG.MAPTILER_STYLE}
               style={{ width: '100%', height: '400px' }}
               attributionControl={false}
               dragRotate={false}
