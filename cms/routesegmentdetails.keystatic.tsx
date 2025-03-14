@@ -1,6 +1,6 @@
 import { collection, fields } from '@keystatic/core'
 import type { FeatureCollection } from 'geojson'
-import cachedRouteGeometry from 'src/content_cache/routegeometry.json'
+import cachedRouteGeometry from '../../src/content_cache/routeGeometry.json' // Needs to be relative to avoid build errors in Vite on Netlify
 import { MapPoint } from './components/keystaticComponents/MapPoint/MapPoint'
 import { mdxComponentsKeystatic } from './components/mdxComponentsKeystatic'
 
