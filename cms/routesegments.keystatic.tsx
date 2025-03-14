@@ -4,7 +4,7 @@ export const keystaticRoutesegmentsConfig = collection({
   label: 'Abschnitte',
   path: 'src/content/routesegments/*',
   slugField: 'title',
-  columns: ['position'],
+  columns: ['title', 'position', 'tsSlug'],
   format: { contentField: 'body' },
   schema: {
     title: fields.slug({ name: { label: 'Titel' } }),
@@ -28,7 +28,11 @@ export const keystaticRoutesegmentsConfig = collection({
     }),
     operator: fields.text({ label: 'Baulastträger' }),
     contact: fields.text({ label: 'Ansprechpartner*in' }),
-    position: fields.number({ label: 'Position' }),
+    position: fields.number({
+      label: 'Reihenfolge der Beiträge',
+      description:
+        'Tipp: 10er-Sprünge verwenden um später Beiträge dazwischen einsortieren zu können.',
+    }),
     markerPositionBottom: fields.checkbox({
       label: 'Tip-Marker in der Karte unten anzeigen',
       defaultValue: false,

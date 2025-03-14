@@ -8,5 +8,6 @@ export const astroRoutesegmentdetailsDefinition = defineCollection({
       route: z.string(),
       latLng: z.string().optional(),
       position: z.number(),
+      markerName: z.string(),
     }),
 })

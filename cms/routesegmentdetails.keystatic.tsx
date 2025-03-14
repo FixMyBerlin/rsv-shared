@@ -9,7 +9,7 @@ export const keystaticRoutesegmentdetailsConfig = collection({
   path: 'src/content/routesegmentdetails/*',
   slugField: 'title',
   format: { contentField: 'body' },
-  columns: ['route', 'position'],
+  columns: ['title', 'route', 'markerName', 'position'],
   schema: {
     title: fields.slug({ name: { label: 'Titel' } }),
     route: fields.relationship({
@@ -18,11 +18,21 @@ export const keystaticRoutesegmentdetailsConfig = collection({
       description: 'Der Abschnitt (Planungsabschnitt), zu dem dieses Detail gehört.',
     }),
     latLng: MapPoint({
-      label: 'Punkt auf der Karte',
+      label: 'Tip-Marker Position',
       referenceGeometry: cachedRouteGeometry as FeatureCollection,
       validation: { isRequired: false },
     }),
-    position: fields.number({ label: 'Position', validation: { isRequired: true } }),
+    markerName: fields.text({
+      label: 'Tip-Marker Name',
+      description: 'Zum Beispiel 1.12',
+      validation: { isRequired: true },
+    }),
+    position: fields.number({
+      label: 'Reihenfolge der Beiträge',
+      description:
+        'Tipp: 10er-Sprünge verwenden um später Beiträge dazwischen einsortieren zu können.',
+      validation: { isRequired: true },
+    }),
     body: fields.mdx({
       label: 'Text',
       components: mdxComponentsKeystatic('routesegments'),
