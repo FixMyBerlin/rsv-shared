@@ -99,27 +99,33 @@ export const RouteMap = ({
   }
 
   return (
-    <div className="relative mt-12 mb-24 h-[500px] w-full">
-      <BaseMap
-        setSelected={setSelectedSegment}
-        markers={routesegmentDetailMarkers ? [...markers, ...routesegmentDetailMarkers] : markers}
-        geometries={featureCollection(geometry)}
-        focusSegment={focusSegemntId}
-        handleRouteClick={handleRouteClick}
-        linePaint={getLinePaintRouteMap(focusSegemntId)}
-      />
-      <div className="grid w-full grid-cols-3 gap-3 bg-gray-200 p-2 sm:grid-cols-4 md:grid-cols-5">
+    <figure className="mt-12">
+      <div className="h-[500px] w-full">
+        <BaseMap
+          setSelected={setSelectedSegment}
+          markers={routesegmentDetailMarkers ? [...markers, ...routesegmentDetailMarkers] : markers}
+          geometries={featureCollection(geometry)}
+          focusSegment={focusSegemntId}
+          handleRouteClick={handleRouteClick}
+          linePaint={getLinePaintRouteMap(focusSegemntId)}
+        />
+      </div>
+      <figcaption className="grid w-full grid-cols-3 gap-x-5 gap-y-3 bg-gray-200 px-3 py-2 sm:grid-cols-4 md:grid-cols-5">
         {Array.from(routeSegmentStatus).map(([status, { colorClass, icon, label }]) => (
-          <div key={status} className="flex items-center gap-2 pl-4">
+          <div key={status} className="flex items-center gap-2">
             <div
-              className={clsx('flex h-6 w-6 items-center justify-center rounded-full', colorClass)}
+              className={clsx(
+                'flex size-6 flex-none items-center justify-center rounded-full',
+                colorClass,
+              )}
+              aria-hidden={true}
             >
-              <img src={icon.src} alt="" className="h-5 w-5" />
+              <img src={icon.src} alt="" className="size-5" />
             </div>
             <span className="text-sm">{label}</span>
           </div>
         ))}
-      </div>
-    </div>
+      </figcaption>
+    </figure>
   )
 }

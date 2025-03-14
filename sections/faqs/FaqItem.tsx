@@ -46,7 +46,7 @@ export const FaqItem = ({ title, children, showNumber }: Props) => {
                 <ChevronDownIcon
                   className={clsx(
                     open ? '-rotate-180' : 'rotate-0',
-                    'h-6 w-6 transform group-hover:text-gray-900',
+                    'size-6 transform group-hover:text-gray-900',
                   )}
                 />
               </span>
