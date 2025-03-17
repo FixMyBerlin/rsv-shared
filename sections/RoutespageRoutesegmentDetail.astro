@@ -7,9 +7,9 @@ const { detail } = Astro.props
 const { Content } = await detail.render()
 ---
 
-<article class="flex flex-col gap-6 py-5 lg:flex-row">
+<article class="flex flex-col items-start gap-6 py-5 lg:flex-row">
   <span
-    class="flex h-10 w-10 flex-none items-center justify-center rounded-full border bg-white pt-1 text-lg font-extrabold text-black shadow-lg"
+    class="flex items-center justify-center rounded-lg border bg-white px-2 text-base font-extrabold shadow-lg"
     aria-hidden="true"
   >
     {detail.data.markerName}
