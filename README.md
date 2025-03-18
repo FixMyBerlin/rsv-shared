@@ -50,9 +50,7 @@ After we changed something, we should update all other projects.
 
 - Check the state of the repo (eg. no pending changes)
 - Fetch and commit the submodule
--->
 
-<!--
 #### TODO: `bun run shared/scripts/all-push.ts`
 
 - Run npm run check on each Repo.
