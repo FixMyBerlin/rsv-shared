@@ -12,6 +12,7 @@ type Props = {
   routesegments: CollectionEntry<'routesegments'>[]
   focusSegemntId?: string
   routesegmentDetailMarkers?: React.ReactNode[]
+  subPagesActive?: boolean
 }
 
 export const RouteMap = ({
@@ -19,6 +20,7 @@ export const RouteMap = ({
   routesegments,
   focusSegemntId,
   routesegmentDetailMarkers,
+  subPagesActive,
 }: Props) => {
   const [selectedSegment, setSelectedSegment] = useState<string | null>(null)
 
@@ -81,7 +83,8 @@ export const RouteMap = ({
           onMouseEnter={() => setSelectedSegment(segment.properties.subsectionSlug)}
           onMouseLeave={() => setSelectedSegment(null)}
         >
-          {focusSegemntId && focusSegemntId === segment.properties.subsectionSlug ? (
+          {(focusSegemntId && focusSegemntId === segment.properties.subsectionSlug) ||
+          !subPagesActive ? (
             markerContent
           ) : (
             <a href={`/route/${matchingSegment?.slug}`}>{markerContent}</a>
