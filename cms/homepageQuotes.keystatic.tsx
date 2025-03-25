@@ -15,7 +15,7 @@ export const keystaticHomepageQuotesConfig = collection({
     position: fields.text({ label: 'Rolle', validation: { isRequired: false } }),
     image: fields.image({
       label: 'Bild',
-      description: 'Bild bitte im Format 500x500px hochladen.',
+      description: 'Bild bitte im Format 500x500px hochladen. (Pixel, kein SVG!)',
       directory: 'src/content/homepageQuotes',
       publicPath: '../../content/homepageQuotes',
       validation: { isRequired: true },

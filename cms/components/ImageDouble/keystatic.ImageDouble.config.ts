@@ -30,6 +30,7 @@ export const keystaticImageDoubleConfig = (imagePath: string) =>
     schema: {
       src: fields.image({
         label: '1. Bild',
+        description: '(Pixel, kein SVG!)',
         directory: `src/assets/${imagePath}`,
         publicPath: `/src/assets/${imagePath}`,
         validation: { isRequired: true },
@@ -40,6 +41,7 @@ export const keystaticImageDoubleConfig = (imagePath: string) =>
       }),
       srcSecond: fields.image({
         label: '2. Bild',
+        description: '(Pixel, kein SVG!)',
         directory: `src/assets/${imagePath}`,
         publicPath: `/src/assets/${imagePath}`,
         validation: { isRequired: true },

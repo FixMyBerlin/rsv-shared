@@ -50,7 +50,7 @@ export const keystaticHomepageHeroConfig = singleton({
     }),
     image: fields.image({
       label: 'Bild',
-      description: 'Bild bitte im Format 800x500px hochladen.',
+      description: 'Bild bitte im Format 800x500px hochladen. (Pixel, kein SVG!)',
       directory: 'src/content/homepageHero',
       publicPath: '../../content/homepageHero',
       validation: { isRequired: true },

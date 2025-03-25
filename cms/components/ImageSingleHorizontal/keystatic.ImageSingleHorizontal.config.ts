@@ -43,6 +43,7 @@ export const keystaticImageSingleHorizontalConfig = (imagePath: string) =>
     schema: {
       src: fields.image({
         label: 'Bild',
+        description: '(Pixel, kein SVG!)',
         directory: `src/assets/${imagePath}`,
         publicPath: `/src/assets/${imagePath}`,
         validation: { isRequired: true },

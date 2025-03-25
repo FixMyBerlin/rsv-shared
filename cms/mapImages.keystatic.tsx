@@ -20,7 +20,7 @@ export const keystaticMapImagesConfig = collection({
     }),
     image: fields.image({
       label: 'Karte',
-      description: 'Mindestes 960px, besser 1.920px',
+      description: 'Mindestes 960px, besser 1.920px. (Pixel, kein SVG!)',
       directory: 'src/content/mapImages',
       publicPath: '../../content/mapImages',
       validation: { isRequired: true },

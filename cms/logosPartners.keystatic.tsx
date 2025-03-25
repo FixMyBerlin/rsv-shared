@@ -10,7 +10,7 @@ export const keystaticLogosPartnersConfig = collection({
     imageAlt: fields.slug({ name: { label: 'Bild Alt Attribut' } }),
     image: fields.image({
       label: 'Bild',
-      description: 'Bild bitte im Format 80x80px hochladen.',
+      description: 'Bild bitte im Format 80x80px hochladen. (Pixel, kein SVG!)',
       directory: 'src/content/logosPartners',
       publicPath: '../../content/logosPartners',
       validation: { isRequired: true },
