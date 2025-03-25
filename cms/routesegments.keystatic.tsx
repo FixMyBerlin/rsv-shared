@@ -32,6 +32,7 @@ export const keystaticRoutesegmentsConfig = collection({
       label: 'Reihenfolge der Beiträge',
       description:
         'Tipp: 10er-Sprünge verwenden um später Beiträge dazwischen einsortieren zu können.',
+      validation: { isRequired: true },
     }),
     markerPositionBottom: fields.checkbox({
       label: 'Tip-Marker in der Karte unten anzeigen',
