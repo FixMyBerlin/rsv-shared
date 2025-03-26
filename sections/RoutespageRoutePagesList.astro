@@ -13,10 +13,10 @@ const segments = unsortedSegments.sort((a, b) => a.data.position - b.data.positi
       segments.map((item) => {
         return (
           <a
-            class="group flex flex-col justify-between bg-[#ECF1F9] p-4 text-black hover:bg-[#D9E4F2]"
+            class="group flex flex-col justify-between bg-[#ECF1F9] p-4 leading-normal text-black hover:bg-[#D9E4F2]"
             href={`/route/${item.slug}`}
           >
-            <p class="mb-3">{item.data.title}</p>
+            <p class="mb-3 font-bold">{item.data.title}</p>
             <small class={LINKCLASSES.groupLink}>Weiterlesen</small>
           </a>
         )
