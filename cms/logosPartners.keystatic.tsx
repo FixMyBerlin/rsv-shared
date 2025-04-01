@@ -6,6 +6,12 @@ export const keystaticLogosPartnersConfig = collection({
   slugField: 'imageAlt',
   columns: ['position'],
   schema: {
+    showInMenu: fields.checkbox({
+      label: 'In der Menü-Leiste anzeigen',
+      description:
+        'Wenn aktiviert, wird Logo in Menü-Leiste angezeigt, sonst im Footer unter "In Zusammenarbeit mit".',
+      defaultValue: true,
+    }),
     position: fields.number({ label: 'Reihenfolge', validation: { isRequired: true } }),
     imageAlt: fields.slug({ name: { label: 'Bild Alt Attribut' } }),
     image: fields.image({

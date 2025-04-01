@@ -5,9 +5,42 @@ import { Picture } from 'astro:assets'
 import { getCollection } from 'astro:content'
 
 const logos = await getCollection('logosSponsors')
+
+const allPartnerLogos = await getCollection('logosPartners')
+const partnerLogos = allPartnerLogos.filter((logo) => !logo.data.showInMenu)
 ---
 
 <Section className="pb-12">
+  {
+    partnerLogos.length > 0 && (
+      <>
+        <h2 class="mt-16 mb-6 text-base leading-normal font-normal text-[#959595]">
+          In Zusammenarbeit mit:
+        </h2>
+
+        <div class="flex flex-col items-center gap-5 lg:flex-row lg:gap-10">
+          {partnerLogos
+            .sort((a, b) => a.data.position - b.data.position)
+            .map((item) => {
+              const logo = item.data
+              return (
+                <LinkExternal className="w-48" href={logo.href}>
+                  <Picture
+                    src={logo.image}
+                    alt={logo.imageAlt}
+                    class="w-48 lg:h-full"
+                    pictureAttributes={{ class: 'not-prose w-full' }}
+                    width={192}
+                    densities={[1.5, 2]}
+                    formats={['png', 'avif']}
+                  />
+                </LinkExternal>
+              )
+            })}
+        </div>
+      </>
+    )
+  }
   <h2 class="mt-16 mb-6 text-base leading-normal font-normal text-[#959595]">
     Gefördert und unterstützt durch:
   </h2>

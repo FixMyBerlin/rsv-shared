@@ -5,6 +5,7 @@ export const astroLogosPartnersDefinition = defineCollection({
   schema: ({ image }) =>
     z.object({
       position: z.number(),
+      showInMenu: z.boolean().optional(),
       imageAlt: z.string(),
       image: image(),
       imageHeight: z.number().optional(),

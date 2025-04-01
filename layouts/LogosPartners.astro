@@ -4,7 +4,8 @@ import { Picture } from 'astro:assets'
 import { getCollection } from 'astro:content'
 import { clsx } from 'clsx'
 
-const logos = await getCollection('logosPartners')
+const allLogos = await getCollection('logosPartners')
+const logos = allLogos.filter((logo) => logo.data.showInMenu)
 ---
 
 {
