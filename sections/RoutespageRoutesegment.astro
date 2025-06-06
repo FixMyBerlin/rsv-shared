@@ -10,6 +10,7 @@ type Props = {
 
 const { route } = Astro.props
 
+// we query the segments collection again to have all the logic in a compoenent of our submodule shared folder compoent and not on the /route/[slug].astro page
 const segments = await getCollection('routesegments')
 
 const getPreviousSegment = ({ segments, position }: { segments: any[]; position: number }) => {
