@@ -25,7 +25,7 @@ export const RoutesegmentMap = ({
           key={detail.data.latLng}
           latitude={point.lat}
           longitude={point.lng}
-          className="flex items-center justify-center rounded-lg border bg-white px-2 text-base font-extrabold shadow-lg"
+          className="flex min-w-8 items-center justify-center rounded-lg border bg-white px-2 font-sans text-base font-extrabold shadow-lg"
         >
           {detail?.data.markerName}
         </Marker>
