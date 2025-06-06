@@ -9,11 +9,11 @@ if (homepage === undefined) return Astro.redirect('/404')
 
 <Section prose className="prose-ul:pl-0 prose-li:list-none prose-li:py-1.5">
   <h2>{homepage.data.titleLinks}</h2>
-  <ul>
+  <ul class="text-balance">
     {
       (homepage.data.links || []).map((link) => {
         return (
-          <li>
+          <li class="leading-relaxed">
             <LinkExternal blank href={link.href}>
               {link.label}
             </LinkExternal>
