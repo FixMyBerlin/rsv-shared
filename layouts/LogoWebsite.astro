@@ -13,5 +13,6 @@ if (logo === undefined) return Astro.redirect('/404')
   alt={logo.data.imageAlt}
   height={56}
   densities={[1.5, 2]}
-  formats={['png', 'avif']}
+  formats={['avif']}
+  fallbackFormat="png"
 />

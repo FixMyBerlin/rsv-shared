@@ -36,7 +36,8 @@ const position =
       loading="lazy"
       width={width === 'half' ? 960 / 2 : 960}
       densities={[1.5, 2]}
-      formats={['jpg', 'avif']}
+      formats={['avif']}
+      fallbackFormat="jpg"
     />
     {caption && <ImageFigcaption>{caption}</ImageFigcaption>}
   </figure>

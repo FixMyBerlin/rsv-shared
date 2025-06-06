@@ -32,7 +32,8 @@ const partnerLogos = allPartnerLogos.filter((logo) => !logo.data.showInMenu)
                     pictureAttributes={{ class: 'not-prose w-full' }}
                     width={192}
                     densities={[1.5, 2]}
-                    formats={['png', 'avif']}
+                    formats={['avif']}
+                    fallbackFormat="png"
                   />
                 </LinkExternal>
               )
@@ -60,7 +61,8 @@ const partnerLogos = allPartnerLogos.filter((logo) => !logo.data.showInMenu)
                 pictureAttributes={{ class: 'not-prose w-full' }}
                 width={192}
                 densities={[1.5, 2]}
-                formats={['png', 'avif']}
+                formats={['avif']}
+                fallbackFormat="png"
               />
             </LinkExternal>
           )

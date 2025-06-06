@@ -16,7 +16,8 @@ const { quote, name, position, image, imageCopyright } = Astro.props.quote
       src={image}
       alt=""
       widths={[130, 320, 600]}
-      formats={['jpg', 'avif']}
+      formats={['avif']}
+      fallbackFormat="jpg"
       class="h-[130px] w-[130px] overflow-hidden rounded-full object-cover lg:h-[320px] lg:w-[320px]"
       pictureAttributes={{ class: 'not-prose' }}
     />

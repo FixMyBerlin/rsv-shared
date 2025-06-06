@@ -37,7 +37,8 @@ const ratio = 'value' in imageConfig ? imageConfig.value : undefined
           loading="lazy"
           width={960 / 2 - 20 / 2}
           densities={[1.5, 2]}
-          formats={['jpg', 'avif']}
+          formats={['avif']}
+          fallbackFormat="jpg"
         />
         {image.caption && <ImageFigcaption>{caption}</ImageFigcaption>}
       </figure>

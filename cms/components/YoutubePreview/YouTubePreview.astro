@@ -30,7 +30,8 @@ const image = getImage(previewImage)
       pictureAttributes={{ class: 'not-prose w-full' }}
       width={960}
       densities={[1.5, 2]}
-      formats={['jpg', 'avif']}
+      formats={['avif']}
+      fallbackFormat="jpg"
     />
   </picture>
 </LinkExternal>

@@ -16,7 +16,8 @@ const { participation, title1, title2, waypoints, image, imageCopyright } = home
   <Picture
     src={image}
     widths={[390, 1300, image.width]}
-    formats={['jpg', 'avif']}
+    formats={['avif']}
+    fallbackFormat="jpg"
     alt=""
     class="h-full w-full object-cover"
     pictureAttributes={{ class: 'not-prose w-full' }}

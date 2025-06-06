@@ -19,7 +19,8 @@ const { legend, image, imageAlt, imageCopyright } = mapImage.data as InferEntryS
     class="mb-0! w-full"
     width={960}
     densities={[1.5, 2]}
-    formats={['png', 'webp', 'avif']}
+    formats={['avif']}
+    fallbackFormat="jpg"
   />
   {
     (legend || imageCopyright) && (

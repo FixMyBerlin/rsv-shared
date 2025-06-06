@@ -28,7 +28,8 @@ const position = 'value' in imageConfig ? imageConfig.value : undefined
       alt={alt || ''}
       loading="lazy"
       width={width === 'half' ? 960 / 2 : 960}
-      formats={['jpg', 'avif']}
+      formats={['avif']}
+      fallbackFormat="jpg"
       densities={[1.5, 2]}
     />
     <ImageFigcaption>{caption}</ImageFigcaption>
