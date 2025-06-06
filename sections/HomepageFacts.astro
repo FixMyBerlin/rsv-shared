@@ -19,10 +19,7 @@ const homepageFacts = await getCollection('homepageFacts')
             <div class="items-center justify-between md:flex">
               <div class="w-full rounded-md bg-white px-6 py-4 text-center shadow-lg md:w-[35%]">
                 <div
-                  class={clsx(
-                    COLORSCLASSES.factNumber,
-                    'font-extrabold lg:text-[32px] lg:leading-[48px]',
-                  )}
+                  class={clsx(COLORSCLASSES.factNumber, 'leading-9 font-extrabold lg:text-[32px]')}
                 >
                   {factItem.fact}
                 </div>
