@@ -29,7 +29,7 @@ const position = 'value' in imageConfig ? imageConfig.value : undefined
       loading="lazy"
       width={width === 'half' ? 960 / 2 : 960}
       formats={['avif']}
-      fallbackFormat="jpg"
+      fallbackFormat="webp"
       densities={[1.5, 2]}
     />
     <ImageFigcaption>{caption}</ImageFigcaption>
