@@ -4,9 +4,32 @@ import Section from '@shared/layouts/Section.astro'
 import { getCollection, getEntry, type CollectionEntry } from 'astro:content'
 import RoutespageRoutesegmentDetail from './RoutespageRoutesegmentDetail.astro'
 
-type Props = { route: CollectionEntry<'routesegments'> }
+type Props = {
+  route: CollectionEntry<'routesegments'>
+}
 
 const { route } = Astro.props
+
+const segments = await getCollection('routesegments')
+
+const getPreviousSegment = ({ segments, position }: { segments: any[]; position: number }) => {
+  return (
+    segments
+      .filter((segment) => segment.data.position < position)
+      .sort((a, b) => b.data.position - a.data.position)[0] || null
+  )
+}
+const getNextSegment = ({ segments, position }: { segments: any[]; position: number }) => {
+  return (
+    segments
+      .filter((segment) => segment.data.position > position)
+      .sort((a, b) => a.data.position - b.data.position)[0] || null
+  )
+}
+
+const previousSegment = getPreviousSegment({ segments, position: route.data.position })
+const nextSegment = getNextSegment({ segments, position: route.data.position })
+
 const { Content } = await route.render()
 const routesegmentDetails = await getCollection('routesegmentdetails')
 
@@ -23,8 +46,23 @@ const subPagesActive = page?.data.subPagesActive
 <Section prose>
   {
     subPagesActive && (
-      <div class="mt-16">
-        <a href="/route">← Zurück zur Routenübersicht</a>
+      <div class="mt-16 mb-12 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+        <a class="sm:hidden" href="/route">
+          Zur Routenübersicht
+        </a>
+        {previousSegment && (
+          <a href={`/route/${previousSegment.slug}`} class="inline-flex items-center">
+            ← Zum vorherigen Abschnitt
+          </a>
+        )}
+        <a class="hidden sm:block" href="/route">
+          Zur Routenübersicht
+        </a>
+        {nextSegment && (
+          <a href={`/route/${nextSegment.slug}`} class="inline-flex items-center">
+            Zum nächsten Abschnitt →
+          </a>
+        )}
       </div>
     )
   }
