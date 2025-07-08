@@ -40,6 +40,11 @@ const filteredAndSortedDetails = routesegmentDetails
 
 const { title, operator, contact } = route.data
 
+const routeGeometries = await getCollection('routegeometries')
+const routeFeatureStatus = routeGeometries.find(
+  (s) => s.data.properties.subsectionSlug === route.data.tsSlug
+)?.data.properties.status
+
 const page = await getEntry('routepage', 'index')
 const subPagesActive = page?.data.subPagesActive
 ---
@@ -77,11 +82,13 @@ const subPagesActive = page?.data.subPagesActive
               <strong>Baulastträger/in:</strong> {operator}
             </>
           )}
-          {operator && (
+          <br />
+          {routeFeatureStatus && (
             <>
-              <strong>Planungsstand:</strong> {operator}
+              <strong>Planungsstand:</strong> {routeFeatureStatus}
             </>
           )}
+          <br />
           {contact && (
             <>
               <strong>Ansprechpartner/in:</strong> {contact}
