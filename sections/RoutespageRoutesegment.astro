@@ -70,16 +70,23 @@ const subPagesActive = page?.data.subPagesActive
   <header id={route.slug} class="scroll-m-8">
     <h2>{title}</h2>
     {
-      operator && (
+      (
         <p>
-          <strong>Baulastträger/in:</strong> {operator}
-        </p>
-      )
-    }
-    {
-      contact && (
-        <p>
-          <strong>Ansprechpartner/in:</strong> {contact}
+          {operator && (
+            <>
+              <strong>Baulastträger/in:</strong> {operator}
+            </>
+          )}
+          {operator && (
+            <>
+              <strong>Planungsstand:</strong> {operator}
+            </>
+          )}
+          {contact && (
+            <>
+              <strong>Ansprechpartner/in:</strong> {contact}
+            </>
+          )}
         </p>
       )
     }
