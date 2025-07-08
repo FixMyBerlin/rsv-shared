@@ -76,20 +76,21 @@ const navigation = await buildNavigation()
       // We could use this lookup to add <link rel="canonical" href="..."> tags.
       // However, I still hope for a solution in Astro to handle this automatically.
       // And in our case the SEO case should be a minor issue.
-      const redirects = new Map([
-        ['/beteiligung/', '/beteiligung'],
-        ['/datenschutz/', '/datenschutz'],
-        ['/faq/', '/faq'],
-        ['/impressum/', '/impressum'],
-        ['/leichte-sprache/', '/leichte-sprache'],
-        ['/route/', '/route'],
-      ])
-      const currentPath = window.location.pathname
-      const newPath = redirects.get(currentPath)
-      if (newPath) {
-        console.log(`Redirecting from ${currentPath} to ${newPath}`)
-        window.location.replace(newPath)
-      }
+      //   const redirects = new Map([
+      //     ['/beteiligung/', '/beteiligung'],
+      //     ['/datenschutz/', '/datenschutz'],
+      //     ['/faq/', '/faq'],
+      //     ['/impressum/', '/impressum'],
+      //     ['/leichte-sprache/', '/leichte-sprache'],
+      //     ['/route/', '/route'],
+      //   ])
+      //   const currentPath = window.location.pathname
+      //   const newPath = redirects.get(currentPath)
+      //   if (newPath) {
+      //     console.log(`Redirecting from ${currentPath} to ${newPath}`)
+      //     window.location.replace(newPath)
+      //   }
+      //
     </script>
   </head>
   <body class="flex h-full flex-col text-base text-[#111827]">
