@@ -42,7 +42,7 @@ const { title, operator, contact } = route.data
 
 const routeGeometries = await getCollection('routegeometries')
 const routeFeatureStatus = routeGeometries.find(
-  (s) => s.data.properties.subsectionSlug === route.data.tsSlug
+  (s) => s.data.properties.subsectionSlug === route.data.tsSlug,
 )?.data.properties.status
 
 const page = await getEntry('routepage', 'index')
