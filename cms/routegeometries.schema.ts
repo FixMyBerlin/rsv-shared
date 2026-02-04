@@ -1,6 +1,6 @@
 import { z } from 'astro/zod'
 
-const statusOptions = ['In Planung'] as const
+const statusOptions = ['In Planung', 'Idee', 'Prüfung', 'Umsetzung', 'Fertig'] as const
 
 const position = z.tuple([z.number(), z.number()])
 const geometryLinestring = z.strictObject({

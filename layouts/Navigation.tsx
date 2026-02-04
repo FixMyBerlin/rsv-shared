@@ -18,6 +18,10 @@ export const Navigation = ({
   slotPartnerLogos: slotLogos,
 }: Props) => {
   // https://tailwindui.com/components/application-ui/navigation/navbars
+
+  console.log({ pathname })
+  console.log({ navigation })
+
   return (
     <Disclosure as="header" className="z-20 bg-white shadow-md shadow-gray-400/5">
       {({ open }) => (

@@ -7,17 +7,17 @@ export const buildNavigation = async () => {
 
   const surveyresultpage = await getEntry('surveyresultspage', 'index')
   if (surveyresultpage?.data?.active === false) {
-    navigation = navigation.filter((link) => link.href !== '/beteiligung')
+    navigation = navigation.filter((link) => link.href !== '/beteiligung/')
   }
 
   const faqspage = await getEntry('faqspage', 'index')
   if (faqspage?.data?.active === false) {
-    navigation = navigation.filter((link) => link.href !== '/faq')
+    navigation = navigation.filter((link) => link.href !== '/faq/')
   }
 
   const simplifiedLanguage = await getEntry('simplifiedlanguagepage', 'index')
   if (simplifiedLanguage?.data?.active === false) {
-    navigation = navigation.filter((link) => link.href !== '/leichte-sprache')
+    navigation = navigation.filter((link) => link.href !== '/leichte-sprache/')
   }
 
   return navigation
