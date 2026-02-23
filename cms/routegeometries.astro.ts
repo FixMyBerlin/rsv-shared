@@ -1,7 +1,7 @@
 import { BASE_CONFIG } from '@config/config'
 import { featureCollection } from '@turf/turf'
 import { defineCollection } from 'astro:content'
-import { writeFile } from 'fs/promises'
+import { readdir, unlink, writeFile } from 'fs/promises'
 import { join } from 'path'
 import { basePath } from './routegeometries.keystatic'
 import {
@@ -69,7 +69,18 @@ async function fetchAndStore() {
 
   // We also store a chached version as featureCollection, see src/content_cache/README.md
   const outputPath = join(process.cwd(), 'src', 'content', 'routegeometries')
+  const freshIds = new Set(features.map((f) => f.id))
   for (const feature of features) {
     await writeFile(join(outputPath, `${feature.id}.json`), JSON.stringify(feature, null, 2))
+  }
+
+  // Remove files for geometries that no longer exist in the API
+  const existingFiles = await readdir(outputPath)
+  for (const file of existingFiles) {
+    if (!file.endsWith('.json')) continue
+    const id = file.replace(/\.json$/, '')
+    if (!freshIds.has(id)) {
+      await unlink(join(outputPath, file))
+    }
   }
 }
