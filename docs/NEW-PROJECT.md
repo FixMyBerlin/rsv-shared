@@ -1,9 +1,22 @@
 # New RSV project — manual follow-ups
 
 After running [`shared/scripts/new-project.ts`](../scripts/new-project.ts), the new
-repo has working code, a `shared/` submodule, a configured `BASE_CONFIG`, and an
-optional GitHub repo. A few things still need to be done by hand — work through
-this list before you ship the new site.
+folder has copied code and a configured `BASE_CONFIG`, but **no** `.git` and **no**
+`shared/` submodule yet — you add those with `git init` and `git submodule add` (see
+below). The script does **not** create the GitHub repository — create `FixMyBerlin/rsv-<slug>`
+on GitHub yourself, add `origin`, commit, and push. A few more things still need
+to be done by hand — work through this list before you ship the new site.
+
+## 0. Git repository and `shared/` submodule
+
+Do this **inside the new project folder** (e.g. `rsv-landingages/rsv-<slug>/`):
+
+- [ ] `git init`
+- [ ] `git branch -M main`
+- [ ] `git submodule add https://github.com/FixMyBerlin/rsv-shared.git shared`
+- [ ] Create the GitHub repo, add `origin`, `npm install`, then `git add -A`, commit, and push
+
+Then continue with the Keystatic app and the rest of this checklist.
 
 > Replace `<slug>` with the value you passed to `--slug` (e.g. `rs8`) and
 > `<display-name>` with the human-readable name (e.g. `Radschnellweg 8`).

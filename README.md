@@ -71,16 +71,15 @@ bun ./shared/scripts/new-project.ts \
   --slug rs8 \
   --cms-name RS8 \
   --display-name "Radschnellweg 8" \
-  --url https://rs8.example.de \
-  --create-repo
+  --url https://rs8.example.de
 ```
 
-The script copies the current repo into a sibling `rsv-<slug>` folder, rewrites
-project-specific values (`config/config.ts`, `README.md`, `.env*`,
-`package.json`), re-initialises git history with `rsv-shared` re-added as a
-submodule at `shared/`, runs `npm install`, and (with `--create-repo`)
-creates `FixMyBerlin/rsv-<slug>` via `gh repo create` and pushes the initial
-commit.
+The script copies the current repo into a sibling `rsv-<slug>` folder and rewrites
+project-specific values (`config/config.ts`, `README.md`, `.env*`, `package.json`).
+It does **not** run `git` or `npm` — in the new folder run `git init`, add the
+[`rsv-shared`](https://github.com/FixMyBerlin/rsv-shared) submodule at `shared/`, create
+the GitHub repo, `npm install`, then commit and push. See
+[`shared/docs/NEW-PROJECT.md`](./docs/NEW-PROJECT.md) section 0 for the exact commands.
 
 After the script finishes, work through
 [`shared/docs/NEW-PROJECT.md`](./docs/NEW-PROJECT.md) for the manual

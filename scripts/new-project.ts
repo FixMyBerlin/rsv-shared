@@ -4,8 +4,8 @@
  *
  * Copies the current website repo (assumed to be `rsv-rs21` or any other
  * `rsv-*` template) into a sibling folder `rsv-<slug>`, rewrites all
- * project-specific values, re-initialises the git history with `rsv-shared`
- * as a submodule at `shared/`, and optionally creates the GitHub repo.
+ * project-specific values. In the new folder you run `git init`, add `rsv-shared`
+ * as the `shared/` submodule, create the GitHub repo, `npm install`, then commit and push.
  *
  * Manual follow-ups are listed in `shared/docs/NEW-PROJECT.md` and printed at
  * the end of the run.
@@ -17,17 +17,19 @@
  *     --display-name "Radschnellweg 8" \
  *     --url https://rs8.example.de \
  *     [--trassenscout-slug rs8] \
- *     [--clear-content] \
- *     [--create-repo]
+ *     [--clear-content]
  */
 
-import { $ } from 'bun'
 import {
+  copyFileSync,
   existsSync,
+  mkdirSync,
   readFileSync,
+  readlinkSync,
   readdirSync,
   rmSync,
   statSync,
+  symlinkSync,
   writeFileSync,
 } from 'node:fs'
 import { basename, dirname, join, resolve } from 'node:path'
@@ -40,6 +42,34 @@ import {
   consoleLogSubjectWarning,
 } from './utils/consoleLog'
 
+/** Top-level names to skip when copying the template (same intent as the old rsync excludes). */
+const COPY_EXCLUDE_NAMES = new Set([
+  '.git',
+  '.gitmodules',
+  'node_modules',
+  '.astro',
+  'dist',
+  '.netlify',
+  'shared',
+  '.DS_Store',
+])
+
+function copyTemplateTree(src: string, dest: string) {
+  mkdirSync(dest, { recursive: true })
+  for (const entry of readdirSync(src, { withFileTypes: true })) {
+    if (COPY_EXCLUDE_NAMES.has(entry.name)) continue
+    const from = join(src, entry.name)
+    const to = join(dest, entry.name)
+    if (entry.isDirectory()) {
+      copyTemplateTree(from, to)
+    } else if (entry.isFile()) {
+      copyFileSync(from, to)
+    } else if (entry.isSymbolicLink()) {
+      symlinkSync(readlinkSync(from), to)
+    }
+  }
+}
+
 const USAGE = `
 Usage:
   bun ./shared/scripts/new-project.ts \\
@@ -48,8 +78,7 @@ Usage:
     --display-name "<Display Name>" \\
     --url <https://...> \\
     [--trassenscout-slug <slug>] \\
-    [--clear-content] \\
-    [--create-repo]
+    [--clear-content]
 
 Flags:
   --slug                 Short id used for folder, repo, Keystatic app slug, e.g. 'rs8'
@@ -58,7 +87,6 @@ Flags:
   --url                  BASE_CONFIG.PRODUCTION_URL, e.g. 'https://rs8.example.de'
   --trassenscout-slug    Optional, defaults to --slug
   --clear-content        Wipe src/content/* collection items (singletons preserved)
-  --create-repo          Also create FixMyBerlin/rsv-<slug> via 'gh repo create'
 `.trim()
 
 function fail(message: string): never {
@@ -75,7 +103,6 @@ function parseFlags() {
       url: { type: 'string' },
       'trassenscout-slug': { type: 'string' },
       'clear-content': { type: 'boolean', default: false },
-      'create-repo': { type: 'boolean', default: false },
       help: { type: 'boolean', short: 'h', default: false },
     },
     allowPositionals: false,
@@ -118,7 +145,6 @@ function parseFlags() {
     url,
     trassenscoutSlug: values['trassenscout-slug'] || slug,
     clearContent: values['clear-content'] === true,
-    createRepo: values['create-repo'] === true,
   }
 }
 
@@ -127,11 +153,7 @@ function tsString(value: string): string {
   return `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`
 }
 
-async function preflight(opts: {
-  cwd: string
-  targetDir: string
-  createRepo: boolean
-}) {
+async function preflight(opts: { cwd: string; targetDir: string }) {
   consoleLogSubjectIntro('Pre-flight checks…')
 
   // The submodule convention from shared/README.md: all repos live in `rsv-landingages/`.
@@ -154,34 +176,14 @@ async function preflight(opts: {
     fail(`Target directory already exists: ${opts.targetDir}`)
   }
 
-  if (opts.createRepo) {
-    try {
-      await $`gh auth status`.quiet()
-    } catch {
-      fail(
-        "gh CLI is not authenticated. Run 'gh auth login' first, or re-run without --create-repo.",
-      )
-    }
-  }
-
   consoleLogSubjectOutroSuccess('Pre-flight OK.')
 }
 
 async function copyTemplate(cwd: string, targetDir: string) {
   consoleLogSubjectIntro(`Copying template ${basename(cwd)} -> ${basename(targetDir)}…`)
 
-  // rsync excludes match relative to the source root.
-  // `shared` is re-added as a fresh submodule below; the rest are generated/local files.
-  await $`rsync -a \
-    --exclude=.git \
-    --exclude=.gitmodules \
-    --exclude=node_modules \
-    --exclude=.astro \
-    --exclude=dist \
-    --exclude=.netlify \
-    --exclude=shared \
-    --exclude=.DS_Store \
-    ${cwd}/ ${targetDir}/`
+  // Pure Node copy (no `rsync` on PATH required). `shared/` is omitted — add it via `git submodule add` yourself.
+  copyTemplateTree(resolve(cwd), resolve(targetDir))
 
   consoleLogSubjectOutroSuccess('Template copied.')
 }
@@ -200,7 +202,7 @@ function rewriteProjectFiles(
 
   // package.json — give it a distinct name per project so it's identifiable in `npm ls` etc.
   const pkgPath = join(targetDir, 'package.json')
-  const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'))
+  const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8')) as { name?: string } & Record<string, unknown>
   pkg.name = `rsv-${opts.slug}`
   writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n')
 
@@ -324,74 +326,21 @@ function clearContentCollections(targetDir: string) {
   consoleLogSubjectOutroSuccess('Content collections cleared.')
 }
 
-async function initGitAndSubmodule(targetDir: string) {
-  consoleLogSubjectIntro('Initializing git repo and adding shared/ submodule…')
-
-  await $`git init -b main`.cwd(targetDir).quiet()
-  await $`git submodule add https://github.com/FixMyBerlin/rsv-shared.git shared`.cwd(targetDir)
-
-  consoleLogSubjectOutroSuccess('Git repo initialised, shared/ submodule added.')
-}
-
-async function runNpmInstall(targetDir: string) {
-  consoleLogSubjectIntro('Running npm install (this also wires up Husky hooks)…')
-  try {
-    await $`npm install --no-audit --no-fund`.cwd(targetDir)
-    consoleLogSubjectOutroSuccess('npm install complete.')
-  } catch (err) {
-    consoleLogSubjectWarning(
-      'npm install failed — continuing. You can run it manually in the new repo.',
-      { error: String(err) },
-    )
-  }
-}
-
-async function createGitHubRepoIfRequested(
-  targetDir: string,
-  opts: { slug: string; displayName: string; createRepo: boolean },
-) {
-  if (!opts.createRepo) return
-
-  consoleLogSubjectIntro(`Creating private GitHub repo FixMyBerlin/rsv-${opts.slug}…`)
-  await $`gh repo create ${`FixMyBerlin/rsv-${opts.slug}`} --private --source=. --remote=origin --description ${`Public webpage for ${opts.displayName}`}`.cwd(
-    targetDir,
-  )
-  consoleLogSubjectOutroSuccess(`Repo created: https://github.com/FixMyBerlin/rsv-${opts.slug}`)
-}
-
-async function initialCommitAndPush(
-  targetDir: string,
-  opts: { slug: string; createRepo: boolean },
-) {
-  consoleLogSubjectIntro('Creating initial commit…')
-
-  await $`git add -A`.cwd(targetDir)
-  const message =
-    'Initial commit from rsv-rs21 template\n\n' +
-    'Bootstrapped via shared/scripts/new-project.ts'
-  await $`git commit -m ${message}`.cwd(targetDir).quiet()
-
-  if (opts.createRepo) {
-    consoleLogSubjectIntro('Pushing initial commit to origin/main…')
-    await $`git push -u origin main`.cwd(targetDir)
-    consoleLogSubjectOutroSuccess(`Pushed to FixMyBerlin/rsv-${opts.slug}.`)
-  } else {
-    consoleLogSubjectOutroSuccess('Initial commit created. Add a remote and push when ready.')
-  }
-}
-
-function printChecklist(targetDir: string, opts: { slug: string }) {
+function printChecklist(targetDir: string, templateCwd: string, opts: { slug: string }) {
   console.log('\n' + '='.repeat(72))
   console.log(`Next steps — manual follow-ups for rsv-${opts.slug}`)
   console.log('='.repeat(72) + '\n')
 
-  const checklistPath = join(targetDir, 'shared', 'docs', 'NEW-PROJECT.md')
+  const checklistInNew = join(targetDir, 'shared', 'docs', 'NEW-PROJECT.md')
+  const checklistInTemplate = join(templateCwd, 'shared', 'docs', 'NEW-PROJECT.md')
+  const checklistPath = existsSync(checklistInNew) ? checklistInNew : checklistInTemplate
+
   if (existsSync(checklistPath)) {
     console.log(readFileSync(checklistPath, 'utf-8'))
   } else {
     consoleLogSubjectWarning(
       `Checklist not found at ${checklistPath}. ` +
-        'Update rsv-shared so shared/docs/NEW-PROJECT.md exists, then bump the submodule.',
+        'Ensure this repo has the `shared` submodule checked out, or open `shared/docs/NEW-PROJECT.md` on GitHub.',
     )
   }
 
@@ -405,7 +354,7 @@ async function main() {
   const cwd = process.cwd()
   const targetDir = resolve(cwd, '..', `rsv-${opts.slug}`)
 
-  await preflight({ cwd, targetDir, createRepo: opts.createRepo })
+  await preflight({ cwd, targetDir })
 
   consoleLogSubjectNote(
     [
@@ -417,18 +366,24 @@ async function main() {
       `  Production URL: ${opts.url}`,
       `  Trassenscout:   ${opts.trassenscoutSlug}`,
       `  Clear content:  ${opts.clearContent}`,
-      `  Create repo:    ${opts.createRepo}`,
     ].join('\n'),
   )
 
   await copyTemplate(cwd, targetDir)
   rewriteProjectFiles(targetDir, opts)
   if (opts.clearContent) clearContentCollections(targetDir)
-  await initGitAndSubmodule(targetDir)
-  await runNpmInstall(targetDir)
-  await createGitHubRepoIfRequested(targetDir, opts)
-  await initialCommitAndPush(targetDir, opts)
-  printChecklist(targetDir, opts)
+  consoleLogSubjectNote(
+    [
+      'Next (manual), in the new repo directory:',
+      '  git init',
+      '  git branch -M main   # if your default branch is not already `main`',
+      '  git submodule add https://github.com/FixMyBerlin/rsv-shared.git shared',
+      '  Create the GitHub repo (e.g. FixMyBerlin/rsv-' + opts.slug + '), add remote `origin`,',
+      '  npm install',
+      '  git add -A && git commit -m "Initial commit from template" && git push -u origin main',
+    ].join('\n'),
+  )
+  printChecklist(targetDir, cwd, opts)
 }
 
 main().catch((err) => {
