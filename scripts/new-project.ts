@@ -1,0 +1,437 @@
+#!/usr/bin/env bun
+/**
+ * Bootstrap a new RSV landing-page repo from the current one.
+ *
+ * Copies the current website repo (assumed to be `rsv-rs21` or any other
+ * `rsv-*` template) into a sibling folder `rsv-<slug>`, rewrites all
+ * project-specific values, re-initialises the git history with `rsv-shared`
+ * as a submodule at `shared/`, and optionally creates the GitHub repo.
+ *
+ * Manual follow-ups are listed in `shared/docs/NEW-PROJECT.md` and printed at
+ * the end of the run.
+ *
+ * Usage:
+ *   bun ./shared/scripts/new-project.ts \
+ *     --slug rs8 \
+ *     --cms-name RS8 \
+ *     --display-name "Radschnellweg 8" \
+ *     --url https://rs8.example.de \
+ *     [--trassenscout-slug rs8] \
+ *     [--clear-content] \
+ *     [--create-repo]
+ */
+
+import { $ } from 'bun'
+import {
+  existsSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from 'node:fs'
+import { basename, dirname, join, resolve } from 'node:path'
+import { parseArgs } from 'node:util'
+import {
+  consoleLogSubjectError,
+  consoleLogSubjectIntro,
+  consoleLogSubjectNote,
+  consoleLogSubjectOutroSuccess,
+  consoleLogSubjectWarning,
+} from './utils/consoleLog'
+
+const USAGE = `
+Usage:
+  bun ./shared/scripts/new-project.ts \\
+    --slug <slug> \\
+    --cms-name <CMS_NAME> \\
+    --display-name "<Display Name>" \\
+    --url <https://...> \\
+    [--trassenscout-slug <slug>] \\
+    [--clear-content] \\
+    [--create-repo]
+
+Flags:
+  --slug                 Short id used for folder, repo, Keystatic app slug, e.g. 'rs8'
+  --cms-name             BASE_CONFIG.CMS_NAME, e.g. 'RS8'
+  --display-name         Pretty name for README + META.title, e.g. 'Radschnellweg 8'
+  --url                  BASE_CONFIG.PRODUCTION_URL, e.g. 'https://rs8.example.de'
+  --trassenscout-slug    Optional, defaults to --slug
+  --clear-content        Wipe src/content/* collection items (singletons preserved)
+  --create-repo          Also create FixMyBerlin/rsv-<slug> via 'gh repo create'
+`.trim()
+
+function fail(message: string): never {
+  consoleLogSubjectError(message)
+  process.exit(1)
+}
+
+function parseFlags() {
+  const { values } = parseArgs({
+    options: {
+      slug: { type: 'string' },
+      'cms-name': { type: 'string' },
+      'display-name': { type: 'string' },
+      url: { type: 'string' },
+      'trassenscout-slug': { type: 'string' },
+      'clear-content': { type: 'boolean', default: false },
+      'create-repo': { type: 'boolean', default: false },
+      help: { type: 'boolean', short: 'h', default: false },
+    },
+    allowPositionals: false,
+    strict: true,
+  })
+
+  if (values.help) {
+    console.log(USAGE)
+    process.exit(0)
+  }
+
+  const required = {
+    '--slug': values.slug,
+    '--cms-name': values['cms-name'],
+    '--display-name': values['display-name'],
+    '--url': values.url,
+  }
+  const missing = Object.entries(required)
+    .filter(([, v]) => !v)
+    .map(([k]) => k)
+  if (missing.length > 0) {
+    console.error(USAGE)
+    fail(`Missing required flag(s): ${missing.join(', ')}`)
+  }
+
+  const slug = values.slug!
+  if (!/^[a-z][a-z0-9-]*$/.test(slug)) {
+    fail(`--slug must be lowercase alphanumeric with optional dashes; got '${slug}'`)
+  }
+
+  const url = values.url!
+  if (!/^https?:\/\/[^\s]+$/.test(url)) {
+    fail(`--url must be an http(s) URL; got '${url}'`)
+  }
+
+  return {
+    slug,
+    cmsName: values['cms-name']!,
+    displayName: values['display-name']!,
+    url,
+    trassenscoutSlug: values['trassenscout-slug'] || slug,
+    clearContent: values['clear-content'] === true,
+    createRepo: values['create-repo'] === true,
+  }
+}
+
+/** Single-quote-escape for embedding user input into a TS string literal. */
+function tsString(value: string): string {
+  return `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`
+}
+
+async function preflight(opts: {
+  cwd: string
+  targetDir: string
+  createRepo: boolean
+}) {
+  consoleLogSubjectIntro('Pre-flight checks…')
+
+  // The submodule convention from shared/README.md: all repos live in `rsv-landingages/`.
+  const parentName = basename(dirname(opts.cwd))
+  if (parentName !== 'rsv-landingages') {
+    fail(
+      `Refusing to run: expected the current directory's parent to be 'rsv-landingages' ` +
+        `(per shared/README.md), but parent is '${parentName}'.`,
+    )
+  }
+
+  // Sanity-check that we're actually inside a website repo.
+  for (const required of ['package.json', 'config/config.ts', 'astro.config.mjs', 'shared']) {
+    if (!existsSync(join(opts.cwd, required))) {
+      fail(`Current directory does not look like an RSV website repo: missing '${required}'.`)
+    }
+  }
+
+  if (existsSync(opts.targetDir)) {
+    fail(`Target directory already exists: ${opts.targetDir}`)
+  }
+
+  if (opts.createRepo) {
+    try {
+      await $`gh auth status`.quiet()
+    } catch {
+      fail(
+        "gh CLI is not authenticated. Run 'gh auth login' first, or re-run without --create-repo.",
+      )
+    }
+  }
+
+  consoleLogSubjectOutroSuccess('Pre-flight OK.')
+}
+
+async function copyTemplate(cwd: string, targetDir: string) {
+  consoleLogSubjectIntro(`Copying template ${basename(cwd)} -> ${basename(targetDir)}…`)
+
+  // rsync excludes match relative to the source root.
+  // `shared` is re-added as a fresh submodule below; the rest are generated/local files.
+  await $`rsync -a \
+    --exclude=.git \
+    --exclude=.gitmodules \
+    --exclude=node_modules \
+    --exclude=.astro \
+    --exclude=dist \
+    --exclude=.netlify \
+    --exclude=shared \
+    --exclude=.DS_Store \
+    ${cwd}/ ${targetDir}/`
+
+  consoleLogSubjectOutroSuccess('Template copied.')
+}
+
+function rewriteProjectFiles(
+  targetDir: string,
+  opts: {
+    slug: string
+    cmsName: string
+    displayName: string
+    url: string
+    trassenscoutSlug: string
+  },
+) {
+  consoleLogSubjectIntro('Rewriting project-specific files…')
+
+  // package.json — give it a distinct name per project so it's identifiable in `npm ls` etc.
+  const pkgPath = join(targetDir, 'package.json')
+  const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'))
+  pkg.name = `rsv-${opts.slug}`
+  writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n')
+
+  // config/config.ts — regenerate from scratch so the template is always identical
+  // regardless of which source repo was used as the template.
+  const configPath = join(targetDir, 'config', 'config.ts')
+  const configContent = `export const META = {
+  title: ${tsString(opts.displayName)},
+  description: ${tsString(`TODO: SEO description for ${opts.displayName}.`)},
+}
+
+/** @desc Enable/disable matomo tracking */
+export const USE_MATOMO: boolean = false
+
+export const BASE_CONFIG = {
+  CMS_NAME: ${tsString(opts.cmsName)},
+  CMS_LOGO_PATH: '/icons/icon-48x48.png',
+  GITHUB_REPO_NAME: ${tsString(`rsv-${opts.slug}`)},
+  PRODUCTION_URL: ${tsString(opts.url)},
+  META,
+  USE_MATOMO,
+  TRASSENSCOUT_PROJECT_API_URL: [${tsString(`https://trassenscout.de/api/projects/${opts.trassenscoutSlug}`)}],
+}
+`
+  writeFileSync(configPath, configContent)
+
+  // README.md
+  const readmePath = join(targetDir, 'README.md')
+  const readmeContent = `# About ${opts.displayName}
+
+- [Website](${opts.url})
+- [CMS Keystatic at Netlify](https://cms-rsv-${opts.slug}.netlify.app/keystatic)
+
+# Project structure
+
+## \`/config\`
+
+Site specific data for styling and content (that is not managed by the CMS).
+
+**Validation:** Those files are [validated using zod](shared/scripts/validateConfig.ts) to make sure all other RSV sites have the same config structure so the shared components can rely on them.
+
+## \`/shared\`
+
+See https://github.com/FixMyBerlin/rsv-shared
+
+## \`/src/content\`
+
+Content managed by Keystatic / the CMS. Different for each project of this kind.
+
+## \`/src/pages\`
+
+Astro Pages that take content from Keystatic and render it. Those pages should be the same for all sites of this kind.
+
+# Notes
+
+- RSS feeds are drafted but not implemented, yet. We should add them once we add a blog to the page.
+
+# Bootstrap follow-ups
+
+See [\`shared/docs/NEW-PROJECT.md\`](shared/docs/NEW-PROJECT.md) for the manual checklist (Keystatic GitHub App, Netlify, DNS, brand styles, favicons).
+`
+  writeFileSync(readmePath, readmeContent)
+
+  // .env — keep structure but clear any dev secrets carried over from the template,
+  // and point the Keystatic app slug at the new project.
+  const envPath = join(targetDir, '.env')
+  if (existsSync(envPath)) {
+    let env = readFileSync(envPath, 'utf-8')
+    env = env.replace(/^KEYSTATIC_GITHUB_CLIENT_ID=.*$/m, 'KEYSTATIC_GITHUB_CLIENT_ID=')
+    env = env.replace(/^KEYSTATIC_GITHUB_CLIENT_SECRET=.*$/m, 'KEYSTATIC_GITHUB_CLIENT_SECRET=')
+    env = env.replace(/^KEYSTATIC_SECRET=.*$/m, 'KEYSTATIC_SECRET=')
+    env = env.replace(
+      /^PUBLIC_KEYSTATIC_GITHUB_APP_SLUG=.*$/m,
+      `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG=rsv-lp-${opts.slug}-keystatic # https://github.com/apps/rsv-lp-${opts.slug}-keystatic`,
+    )
+    writeFileSync(envPath, env)
+  }
+
+  // .env.example.* files — point the Keystatic app slug at the new project.
+  for (const file of ['.env.example.local', '.env.example.netlify']) {
+    const p = join(targetDir, file)
+    if (!existsSync(p)) continue
+    const txt = readFileSync(p, 'utf-8').replace(
+      /rsv-lp-[a-z0-9-]+-keystatic/g,
+      `rsv-lp-${opts.slug}-keystatic`,
+    )
+    writeFileSync(p, txt)
+  }
+
+  consoleLogSubjectOutroSuccess('Project files rewritten.')
+}
+
+function clearContentCollections(targetDir: string) {
+  consoleLogSubjectIntro('Clearing content collections (singletons preserved)…')
+
+  const contentRoot = join(targetDir, 'src', 'content')
+  if (!existsSync(contentRoot)) {
+    consoleLogSubjectWarning(`No src/content/ found at ${contentRoot}, skipping.`)
+    return
+  }
+
+  for (const entry of readdirSync(contentRoot)) {
+    const full = join(contentRoot, entry)
+    if (!statSync(full).isDirectory()) continue
+    const children = readdirSync(full)
+    const hasIndex = children.some((c) => c.startsWith('index.'))
+    if (hasIndex) {
+      consoleLogSubjectNote(`  - ${entry}: singleton, left untouched`)
+      continue
+    }
+    let removed = 0
+    for (const c of children) {
+      if (c === '.gitkeep') continue
+      rmSync(join(full, c), { recursive: true, force: true })
+      removed += 1
+    }
+    if (!existsSync(join(full, '.gitkeep'))) writeFileSync(join(full, '.gitkeep'), '')
+    consoleLogSubjectNote(`  - ${entry}: cleared (${removed} removed)`)
+  }
+
+  consoleLogSubjectOutroSuccess('Content collections cleared.')
+}
+
+async function initGitAndSubmodule(targetDir: string) {
+  consoleLogSubjectIntro('Initializing git repo and adding shared/ submodule…')
+
+  await $`git init -b main`.cwd(targetDir).quiet()
+  await $`git submodule add https://github.com/FixMyBerlin/rsv-shared.git shared`.cwd(targetDir)
+
+  consoleLogSubjectOutroSuccess('Git repo initialised, shared/ submodule added.')
+}
+
+async function runNpmInstall(targetDir: string) {
+  consoleLogSubjectIntro('Running npm install (this also wires up Husky hooks)…')
+  try {
+    await $`npm install --no-audit --no-fund`.cwd(targetDir)
+    consoleLogSubjectOutroSuccess('npm install complete.')
+  } catch (err) {
+    consoleLogSubjectWarning(
+      'npm install failed — continuing. You can run it manually in the new repo.',
+      { error: String(err) },
+    )
+  }
+}
+
+async function createGitHubRepoIfRequested(
+  targetDir: string,
+  opts: { slug: string; displayName: string; createRepo: boolean },
+) {
+  if (!opts.createRepo) return
+
+  consoleLogSubjectIntro(`Creating private GitHub repo FixMyBerlin/rsv-${opts.slug}…`)
+  await $`gh repo create ${`FixMyBerlin/rsv-${opts.slug}`} --private --source=. --remote=origin --description ${`Public webpage for ${opts.displayName}`}`.cwd(
+    targetDir,
+  )
+  consoleLogSubjectOutroSuccess(`Repo created: https://github.com/FixMyBerlin/rsv-${opts.slug}`)
+}
+
+async function initialCommitAndPush(
+  targetDir: string,
+  opts: { slug: string; createRepo: boolean },
+) {
+  consoleLogSubjectIntro('Creating initial commit…')
+
+  await $`git add -A`.cwd(targetDir)
+  const message =
+    'Initial commit from rsv-rs21 template\n\n' +
+    'Bootstrapped via shared/scripts/new-project.ts'
+  await $`git commit -m ${message}`.cwd(targetDir).quiet()
+
+  if (opts.createRepo) {
+    consoleLogSubjectIntro('Pushing initial commit to origin/main…')
+    await $`git push -u origin main`.cwd(targetDir)
+    consoleLogSubjectOutroSuccess(`Pushed to FixMyBerlin/rsv-${opts.slug}.`)
+  } else {
+    consoleLogSubjectOutroSuccess('Initial commit created. Add a remote and push when ready.')
+  }
+}
+
+function printChecklist(targetDir: string, opts: { slug: string }) {
+  console.log('\n' + '='.repeat(72))
+  console.log(`Next steps — manual follow-ups for rsv-${opts.slug}`)
+  console.log('='.repeat(72) + '\n')
+
+  const checklistPath = join(targetDir, 'shared', 'docs', 'NEW-PROJECT.md')
+  if (existsSync(checklistPath)) {
+    console.log(readFileSync(checklistPath, 'utf-8'))
+  } else {
+    consoleLogSubjectWarning(
+      `Checklist not found at ${checklistPath}. ` +
+        'Update rsv-shared so shared/docs/NEW-PROJECT.md exists, then bump the submodule.',
+    )
+  }
+
+  console.log('\n' + '='.repeat(72))
+  console.log(`Done. New project lives at: ${targetDir}`)
+  console.log('='.repeat(72))
+}
+
+async function main() {
+  const opts = parseFlags()
+  const cwd = process.cwd()
+  const targetDir = resolve(cwd, '..', `rsv-${opts.slug}`)
+
+  await preflight({ cwd, targetDir, createRepo: opts.createRepo })
+
+  consoleLogSubjectNote(
+    [
+      `Bootstrapping new RSV project rsv-${opts.slug}`,
+      `  Source:         ${cwd}`,
+      `  Target:         ${targetDir}`,
+      `  CMS_NAME:       ${opts.cmsName}`,
+      `  Display name:   ${opts.displayName}`,
+      `  Production URL: ${opts.url}`,
+      `  Trassenscout:   ${opts.trassenscoutSlug}`,
+      `  Clear content:  ${opts.clearContent}`,
+      `  Create repo:    ${opts.createRepo}`,
+    ].join('\n'),
+  )
+
+  await copyTemplate(cwd, targetDir)
+  rewriteProjectFiles(targetDir, opts)
+  if (opts.clearContent) clearContentCollections(targetDir)
+  await initGitAndSubmodule(targetDir)
+  await runNpmInstall(targetDir)
+  await createGitHubRepoIfRequested(targetDir, opts)
+  await initialCommitAndPush(targetDir, opts)
+  printChecklist(targetDir, opts)
+}
+
+main().catch((err) => {
+  consoleLogSubjectError('new-project.ts failed.', { error: String(err) })
+  process.exit(1)
+})

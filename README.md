@@ -60,3 +60,31 @@ After we changed something, we should update all other projects.
 ## Initialize
 
 `git submodule add https://github.com/FixMyBerlin/rsv-shared.git shared`
+
+## Bootstrap a new RSV website
+
+To create a new sibling repo (e.g. `rsv-rs8`) from an existing one, run the
+bootstrap script from inside any existing website repo:
+
+```bash
+bun ./shared/scripts/new-project.ts \
+  --slug rs8 \
+  --cms-name RS8 \
+  --display-name "Radschnellweg 8" \
+  --url https://rs8.example.de \
+  --create-repo
+```
+
+The script copies the current repo into a sibling `rsv-<slug>` folder, rewrites
+project-specific values (`config/config.ts`, `README.md`, `.env*`,
+`package.json`), re-initialises git history with `rsv-shared` re-added as a
+submodule at `shared/`, runs `npm install`, and (with `--create-repo`)
+creates `FixMyBerlin/rsv-<slug>` via `gh repo create` and pushes the initial
+commit.
+
+After the script finishes, work through
+[`shared/docs/NEW-PROJECT.md`](./docs/NEW-PROJECT.md) for the manual
+follow-ups (Keystatic GitHub App, Netlify, DNS, brand colors, favicons).
+
+See [`shared/scripts/new-project.ts`](./scripts/new-project.ts) for the full
+list of flags (run with `--help`).
