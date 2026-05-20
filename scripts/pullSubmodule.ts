@@ -27,6 +27,14 @@ export const pullSubmodule = async () => {
     process.exit(1)
   }
 
+  // Step 1b: Submodules are usually pinned to a commit (detached HEAD); pull needs a branch
+  const { stdout: currentBranch } = await $`git rev-parse --abbrev-ref HEAD`
+    .cwd(submodulePath)
+    .quiet()
+  if (currentBranch.toString('utf-8').trim() === 'HEAD') {
+    await $`git checkout main`.cwd(submodulePath).quiet()
+  }
+
   // Step 2: Update the submodule (rebase)
   const { stdout: pullStatus, stdout: pullError } = await $`git pull --rebase`
     .cwd(submodulePath)
