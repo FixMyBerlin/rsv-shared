@@ -5,24 +5,26 @@ export const buildNavigation = async () => {
   // For some pages, we can specify if they are active. We filter them here.
   let navigation: NavigatinItem[] = NAVIGATION_LINKS
 
+  const normalize = (href?: string) => (href ?? '').replace(/\/+$/, '')
+
   const surveyresultpage = await getEntry('surveyresultspage', 'index')
   if (surveyresultpage?.data?.active === false) {
-    navigation = navigation.filter((link) => link.href !== '/beteiligung/')
+    navigation = navigation.filter((link) => normalize(link.href) !== normalize('/beteiligung'))
   }
 
   const routepage = await getEntry('routepage', 'index')
   if (routepage?.data?.active === false) {
-    navigation = navigation.filter((link) => link.href !== '/route')
+    navigation = navigation.filter((link) => normalize(link.href) !== normalize('/route'))
   }
 
   const faqspage = await getEntry('faqspage', 'index')
   if (faqspage?.data?.active === false) {
-    navigation = navigation.filter((link) => link.href !== '/faq')
+    navigation = navigation.filter((link) => normalize(link.href) !== normalize('/faq'))
   }
 
   const simplifiedLanguage = await getEntry('simplifiedlanguagepage', 'index')
   if (simplifiedLanguage?.data?.active === false) {
-    navigation = navigation.filter((link) => link.href !== '/leichte-sprache/')
+    navigation = navigation.filter((link) => normalize(link.href) !== normalize('/leichte-sprache'))
   }
 
   return navigation
