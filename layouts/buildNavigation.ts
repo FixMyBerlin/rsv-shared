@@ -12,7 +12,7 @@ export const buildNavigation = async () => {
 
   const faqspage = await getEntry('faqspage', 'index')
   if (faqspage?.data?.active === false) {
-    navigation = navigation.filter((link) => link.href !== '/faq/')
+    navigation = navigation.filter((link) => link.href !== '/faq')
   }
 
   const simplifiedLanguage = await getEntry('simplifiedlanguagepage', 'index')
