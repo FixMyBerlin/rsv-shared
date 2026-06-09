@@ -7,6 +7,7 @@ export const keystaticRoutepageConfig = singleton({
   format: { contentField: 'body' },
   path: 'src/content/routepage/',
   schema: {
+    active: fields.checkbox({ label: 'Menüpunkt anzeigen', defaultValue: true }),
     title: fields.text({ label: 'Titel', validation: { isRequired: true } }),
     subtitle: fields.text({ label: 'Untertitel' }),
     subPagesActive: fields.checkbox({

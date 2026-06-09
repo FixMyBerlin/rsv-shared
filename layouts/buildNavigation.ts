@@ -10,6 +10,11 @@ export const buildNavigation = async () => {
     navigation = navigation.filter((link) => link.href !== '/beteiligung/')
   }
 
+  const routepage = await getEntry('routepage', 'index')
+  if (routepage?.data?.active === false) {
+    navigation = navigation.filter((link) => link.href !== '/route')
+  }
+
   const faqspage = await getEntry('faqspage', 'index')
   if (faqspage?.data?.active === false) {
     navigation = navigation.filter((link) => link.href !== '/faq')
