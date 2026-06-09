@@ -6,12 +6,15 @@ import { getCollection, type InferEntrySchema } from 'astro:content'
 import Faqs from './faqs/Faqs.astro'
 
 type Props = {
-  filter: NonNullable<InferEntrySchema<'faqs'>['highlight']>[number]
+  filter?: NonNullable<InferEntrySchema<'faqs'>['highlight']>[number]
+  showLink?: boolean
 }
 const { filter } = Astro.props
+const { showLink = true } = Astro.props
 
 const faqsCollection = await getCollection('faqs', (faqEntry) =>
-  faqEntry.data.highlight?.includes(filter),
+  // If a filter is provided, only include matching faqs, otherwise include all
+  filter ? faqEntry.data.highlight?.includes(filter) : true,
 )
 ---
 
@@ -26,9 +29,11 @@ const faqsCollection = await getCollection('faqs', (faqEntry) =>
 
       <Faqs faqs={faqsCollection} />
 
-      <Link button href="/faq" className="mt-8">
-        Mehr unter FAQs
-      </Link>
+      {showLink && (
+        <Link button href="/faq" className="mt-8">
+          Mehr unter FAQs
+        </Link>
+      )}
     </Section>
   )
 }
