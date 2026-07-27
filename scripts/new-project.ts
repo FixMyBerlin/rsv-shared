@@ -24,9 +24,9 @@ import {
   copyFileSync,
   existsSync,
   mkdirSync,
+  readdirSync,
   readFileSync,
   readlinkSync,
-  readdirSync,
   rmSync,
   statSync,
   symlinkSync,
@@ -202,7 +202,10 @@ function rewriteProjectFiles(
 
   // package.json — give it a distinct name per project so it's identifiable in `npm ls` etc.
   const pkgPath = join(targetDir, 'package.json')
-  const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8')) as { name?: string } & Record<string, unknown>
+  const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8')) as { name?: string } & Record<
+    string,
+    unknown
+  >
   pkg.name = `rsv-${opts.slug}`
   writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n')
 

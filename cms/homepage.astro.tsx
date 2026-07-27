@@ -4,6 +4,7 @@ export const astroHomepageDefinition = defineCollection({
   type: 'content',
   schema: () =>
     z.object({
+      active: z.boolean().optional(),
       title: z.string().optional(), // INFO CMS: The `optional()` is a workaround, see https://github.com/Thinkmill/keystatic/discussions/361#discussioncomment-10475460 for more.
       titleMilestones: z.string().optional(),
       titleLinks: z.string().optional(),

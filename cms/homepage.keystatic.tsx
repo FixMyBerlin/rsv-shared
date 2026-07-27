@@ -7,6 +7,7 @@ export const keystaticHomepageConfig = singleton({
   format: { contentField: 'bodyBeforeQuotes' },
   path: 'src/content/homepage/',
   schema: {
+    active: fields.checkbox({ label: 'Menüpunkt anzeigen', defaultValue: true }),
     // META TAGS
     title: fields.text({ label: 'Titel', validation: { isRequired: true } }),
     // MAIN CONTENT

@@ -7,6 +7,11 @@ export const buildNavigation = async () => {
 
   const normalize = (href?: string) => (href ?? '').replace(/\/+$/, '')
 
+  const homepage = await getEntry('homepage', 'index')
+  if (homepage?.data?.active === false) {
+    navigation = navigation.filter((link) => normalize(link.href) !== normalize('/'))
+  }
+
   const surveyresultpage = await getEntry('surveyresultspage', 'index')
   if (surveyresultpage?.data?.active === false) {
     navigation = navigation.filter((link) => normalize(link.href) !== normalize('/beteiligung'))
