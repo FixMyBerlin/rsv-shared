@@ -35,26 +35,20 @@ export const pullSubmodule = async () => {
     await $`git checkout main`.cwd(submodulePath).quiet()
   }
 
-  // Step 2: Update the submodule (rebase)
-  const { stdout: pullStatus, stdout: pullError } = await $`git pull --rebase`
-    .cwd(submodulePath)
-    .quiet()
-  const pullStatusString = pullStatus.toString('utf-8')
-
-  if (
-    !pullStatusString.includes('Erfolgreich Rebase ausgeführt') &&
-    !pullStatusString.includes('Current branch main is up to date.') &&
-    !pullStatusString.includes('Already up to date.')
-  ) {
+  // Step 2: Update the submodule (rebase). Bun throws on non-zero exit — that is the
+  // real failure signal. Do not parse stdout: successful pulls also print Fast-forward /
+  // rebase summaries that are not "Already up to date."
+  try {
+    await $`git pull --rebase`.cwd(submodulePath).quiet()
+  } catch (error) {
     consoleLogSubjectError('Pulling remote changes failed. Please update manually.', {
-      pullStatusString,
-      pullError: pullError.toString('utf-8'),
+      error: error instanceof Error ? error.message : String(error),
     })
     process.exit(1)
   }
 
   consoleLogSubjectOutroSuccess(
     'Latest submodule is pulled!',
-    '(But not commited to the website repo, yet.)',
+    '(But not committed to the website repo, yet.)',
   )
 }
