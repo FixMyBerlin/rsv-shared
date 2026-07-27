@@ -9,12 +9,12 @@ A folder of components and configuration that is shared between RSV website repo
 
 ### General setup
 
-Put the `rsv-shared` repo and all website repos in a local `rsv-landingages` folder.
+Put the `rsv-shared` repo and all website repos in a local `rsv-landingpages` folder.
 The scripts will rely on this structure.
 
-- `/Development/rsv-landingages/rsv-shared` – [Repo with shared code](https://github.com/FixMyBerlin/rsv-shared) that we access via git submodules
-- `/Development/rsv-landingages/rsv-rs8` - the `/shared` folder hold the code of the `rsv-shared` repo as a git submodule
-- `/Development/rsv-landingages/rsv-frm7` - dito
+- `/Development/rsv-landingpages/rsv-shared` – [Repo with shared code](https://github.com/FixMyBerlin/rsv-shared) that we access via git submodules
+- `/Development/rsv-landingpages/rsv-rs8` - the `/shared` folder hold the code of the `rsv-shared` repo as a git submodule
+- `/Development/rsv-landingpages/rsv-frm7` - dito
 
 ### Submodules know how
 
@@ -43,7 +43,7 @@ See [`pre-push.ts`](./scripts/pre-push.ts), triggered by Husky's [`pre-push`](..
 ### Update all projects
 
 After we changed something, we should update all other projects.
-(TODO) ~We have a helper scripts that will traverse the `rsv-landingages` folders.~
+(TODO) ~We have a helper scripts that will traverse the `rsv-landingpages` folders.~
 
 <!--
 #### TODO: `bun run shared/scripts/all-update.ts`
@@ -76,14 +76,12 @@ bun ./shared/scripts/new-project.ts \
 
 The script copies the current repo into a sibling `rsv-<slug>` folder and rewrites
 project-specific values (`config/config.ts`, `README.md`, `.env*`, `package.json`).
-It does **not** run `git` or `npm` — in the new folder run `git init`, add the
-[`rsv-shared`](https://github.com/FixMyBerlin/rsv-shared) submodule at `shared/`, create
-the GitHub repo, `npm install`, then commit and push. See
-[`shared/docs/NEW-PROJECT.md`](./docs/NEW-PROJECT.md) section 0 for the exact commands.
+It does **not** run `git` or `npm`.
 
-After the script finishes, work through
-[`shared/docs/NEW-PROJECT.md`](./docs/NEW-PROJECT.md) for the manual
-follow-ups (Keystatic GitHub App, Netlify, DNS, brand colors, favicons).
+After the script finishes, use the project skill **`rsv-new-project`**
+([`.cursor/skills/rsv-new-project/SKILL.md`](./.cursor/skills/rsv-new-project/SKILL.md))
+for the full checklist (git init, `rsv-shared` submodule, GitHub repo, Keystatic App,
+Netlify, DNS, brand colors, favicons).
 
 See [`shared/scripts/new-project.ts`](./scripts/new-project.ts) for the full
 list of flags (run with `--help`).

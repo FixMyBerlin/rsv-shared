@@ -7,8 +7,9 @@
  * project-specific values. In the new folder you run `git init`, add `rsv-shared`
  * as the `shared/` submodule, create the GitHub repo, `npm install`, then commit and push.
  *
- * Manual follow-ups are listed in `shared/docs/NEW-PROJECT.md` and printed at
- * the end of the run.
+ * Manual follow-ups live in the project skill `rsv-new-project`
+ * (`shared/.cursor/skills/rsv-new-project/SKILL.md`). A short pointer is printed
+ * at the end of the run.
  *
  * Usage:
  *   bun ./shared/scripts/new-project.ts \
@@ -156,11 +157,11 @@ function tsString(value: string): string {
 async function preflight(opts: { cwd: string; targetDir: string }) {
   consoleLogSubjectIntro('Pre-flight checks…')
 
-  // The submodule convention from shared/README.md: all repos live in `rsv-landingages/`.
+  // The submodule convention from shared/README.md: all repos live in `rsv-landingpages/`.
   const parentName = basename(dirname(opts.cwd))
-  if (parentName !== 'rsv-landingages') {
+  if (parentName !== 'rsv-landingpages') {
     fail(
-      `Refusing to run: expected the current directory's parent to be 'rsv-landingages' ` +
+      `Refusing to run: expected the current directory's parent to be 'rsv-landingpages' ` +
         `(per shared/README.md), but parent is '${parentName}'.`,
     )
   }
@@ -265,7 +266,7 @@ Astro Pages that take content from Keystatic and render it. Those pages should b
 
 # Bootstrap follow-ups
 
-See [\`shared/docs/NEW-PROJECT.md\`](shared/docs/NEW-PROJECT.md) for the manual checklist (Keystatic GitHub App, Netlify, DNS, brand styles, favicons).
+Use the project skill \`rsv-new-project\` ([\`shared/.cursor/skills/rsv-new-project/SKILL.md\`](shared/.cursor/skills/rsv-new-project/SKILL.md)).
 `
   writeFileSync(readmePath, readmeContent)
 
@@ -329,24 +330,18 @@ function clearContentCollections(targetDir: string) {
   consoleLogSubjectOutroSuccess('Content collections cleared.')
 }
 
-function printChecklist(targetDir: string, templateCwd: string, opts: { slug: string }) {
+function printChecklist(targetDir: string, opts: { slug: string }) {
   console.log('\n' + '='.repeat(72))
   console.log(`Next steps — manual follow-ups for rsv-${opts.slug}`)
   console.log('='.repeat(72) + '\n')
-
-  const checklistInNew = join(targetDir, 'shared', 'docs', 'NEW-PROJECT.md')
-  const checklistInTemplate = join(templateCwd, 'shared', 'docs', 'NEW-PROJECT.md')
-  const checklistPath = existsSync(checklistInNew) ? checklistInNew : checklistInTemplate
-
-  if (existsSync(checklistPath)) {
-    console.log(readFileSync(checklistPath, 'utf-8'))
-  } else {
-    consoleLogSubjectWarning(
-      `Checklist not found at ${checklistPath}. ` +
-        'Ensure this repo has the `shared` submodule checked out, or open `shared/docs/NEW-PROJECT.md` on GitHub.',
-    )
-  }
-
+  console.log(
+    [
+      'Complete the checklist with the project skill `rsv-new-project`',
+      '(Cursor/Claude: attach or invoke `/rsv-new-project`).',
+      '',
+      'Skill file: shared/.cursor/skills/rsv-new-project/SKILL.md',
+    ].join('\n'),
+  )
   console.log('\n' + '='.repeat(72))
   console.log(`Done. New project lives at: ${targetDir}`)
   console.log('='.repeat(72))
@@ -386,7 +381,7 @@ async function main() {
       '  git add -A && git commit -m "Initial commit from template" && git push -u origin main',
     ].join('\n'),
   )
-  printChecklist(targetDir, cwd, opts)
+  printChecklist(targetDir, opts)
 }
 
 main().catch((err) => {
