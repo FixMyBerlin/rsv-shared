@@ -67,11 +67,36 @@ What the script changes in the new folder:
 - `config/config.ts` → regenerated from scratch: `META.title`, a **TODO**
   `META.description`, `USE_MATOMO: false`, and `BASE_CONFIG`.
 - `README.md` → regenerated with the display name, production URL, and CMS URL.
-- `.env` → Keystatic secrets blanked, `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` set to
-  `rsv-lp-<slug>-keystatic`.
-- `.env.example.local` / `.env.example.netlify` → same app slug rewrite.
+- `.env.local` → Keystatic secrets blanked, `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` set to
+  `rsv-lp-<slug>-keystatic` (also rewrites a legacy `.env` if present).
+- `.env.example.local` / `.env.example.netlify` / `.env.example.ionos` → same app slug
+  rewrite.
 
 It runs neither `git` nor `npm`.
+
+### Env file convention
+
+Astro/Vite loads both `.env` and `.env.local` in all modes. For RSV sites use:
+
+| File | Tracked? | Purpose |
+|------|----------|---------|
+| `.env.local` | no (gitignored) | Local secrets for `npm run dev` |
+| `.env` | no (gitignored) | Legacy/alternate local file — also ignored |
+| `.env.example.local` | yes | Template → copy to `.env.local` |
+| `.env.example.netlify` | yes | Reference for Netlify env vars |
+| `.env.example.ionos` | yes | Reference for IONOS env vars |
+
+Do **not** create working copies named `.env.netlify` or `.env.ionos`. Copy only
+`.env.example.local` → `.env.local`. `.gitignore` ignores `.env`, `.env.local`, and
+`.env.*`, with an exception for `.env.example.*`.
+
+If the bootstrap left no `.env.local`, run:
+
+```bash
+cp .env.example.local .env.local
+```
+
+Then fill Keystatic credentials (step 1).
 
 ## Manual follow-ups
 
@@ -113,11 +138,11 @@ The script cannot create the GitHub App — there is no public API for it.
 - [ ] Follow [Keystatic GitHub mode setup](https://keystatic.com/docs/github-mode#setting-up-git-hub-mode)
       and create a new GitHub App in the `FixMyBerlin` org named
       **`rsv-lp-<slug>-keystatic`**. The app slug must match
-      `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` in `.env` / `.env.example.*`.
+      `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` in `.env.local` / `.env.example.*`.
 - [ ] Grant the App access to the new `FixMyBerlin/rsv-<slug>` repo only.
 - [ ] Copy the App's `Client ID`, `Client secret`, and a freshly generated
       `KEYSTATIC_SECRET` into all three places:
-  - the new repo's local `.env`, so `npm run dev` works locally
+  - the new repo's local `.env.local`, so `npm run dev` works locally
   - **Bitwarden**, so the credentials don't get lost
   - the Netlify site's environment variables (step 4)
 

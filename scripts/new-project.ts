@@ -270,10 +270,12 @@ Use the project skill \`rsv-new-project\` ([\`shared/.cursor/skills/rsv-new-proj
 `
   writeFileSync(readmePath, readmeContent)
 
-  // .env — keep structure but clear any dev secrets carried over from the template,
+  // .env.local — keep structure but clear any dev secrets carried over from the template,
   // and point the Keystatic app slug at the new project.
-  const envPath = join(targetDir, '.env')
-  if (existsSync(envPath)) {
+  // Prefer .env.local (matches .env.example.local); also rewrite legacy .env if present.
+  for (const envFile of ['.env.local', '.env']) {
+    const envPath = join(targetDir, envFile)
+    if (!existsSync(envPath)) continue
     let env = readFileSync(envPath, 'utf-8')
     env = env.replace(/^KEYSTATIC_GITHUB_CLIENT_ID=.*$/m, 'KEYSTATIC_GITHUB_CLIENT_ID=')
     env = env.replace(/^KEYSTATIC_GITHUB_CLIENT_SECRET=.*$/m, 'KEYSTATIC_GITHUB_CLIENT_SECRET=')
@@ -286,7 +288,7 @@ Use the project skill \`rsv-new-project\` ([\`shared/.cursor/skills/rsv-new-proj
   }
 
   // .env.example.* files — point the Keystatic app slug at the new project.
-  for (const file of ['.env.example.local', '.env.example.netlify']) {
+  for (const file of ['.env.example.local', '.env.example.netlify', '.env.example.ionos']) {
     const p = join(targetDir, file)
     if (!existsSync(p)) continue
     const txt = readFileSync(p, 'utf-8').replace(
