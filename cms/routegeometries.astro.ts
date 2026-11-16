@@ -46,8 +46,8 @@ async function fetchAndStore() {
     if (parsed.success) {
       parsed.data.features.forEach((feature) => {
         const featureWithId = {
-          id: feature.properties.subsectionSlug,
           ...feature,
+          id: feature.properties.subsectionSlug,
         }
         features.push(featureWithId)
       })

@@ -15,6 +15,7 @@ const properties = z.strictObject({
   status: z.enum(statusOptions).nullish(),
 })
 export const ApiRouteGeometryFeatureSchema = z.strictObject({
+  id: z.string().optional(),
   type: z.literal('Feature'),
   properties: properties,
   geometry: geometryLinestring,
